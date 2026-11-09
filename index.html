@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js" integrity="sha384-gnyZit14c5lnGcarmA166QQjjJXpucw25ogZXuwH3HxxY904zHkBqmxVpelsPorb" crossorigin="anonymous"></script>
 <style>
 :root{
   --sand:#f5ede1; --sand2:#ead9c0; --sand3:#d8bf9c; --brown:#8a6847; --brown-d:#4f3a27;
@@ -457,69 +458,75 @@ const S={role:null,lesson:null,size:25,phase:0,maxPhase:0,
   timer:{rem:TOTAL,run:false,last:0},autoAdvance:true,
   results:{},livePeers:{},revealed:{},
   me:null,mine:{},pending:{},follow:true,teacherSeen:false,teacherPhase:null};
-const cap={room:null,lroom:null,db:null,dl:null,user:null};
+const cap={sb:null,lroom:null};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function toast(m,ms=2600){const t=$('toast');t.textContent=m;t.classList.remove('hidden');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.add('hidden'),ms)}
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
 /* =========================================================
-   CAPABILITIES (live sync)
+   LIVE SYNC (Supabase)
    ========================================================= */
-function useCap(name){
-  if(!(window.claude&&typeof window.claude.use==='function'))return Promise.resolve(null);
-  return Promise.race([window.claude.use(name).catch(()=>null),new Promise(r=>setTimeout(()=>r(null),12000))]);
-}
-const capsReady=Promise.all([useCap('room'),useCap('db'),useCap('downloads'),useCap('user')]).then(([r,d,dl,u])=>{cap.room=r;cap.db=d;cap.dl=dl;cap.user=u;});
-const roomName=code=>('rl'+code.replace(/[^0-9a-z]/gi,'')).toLowerCase();
+const SB_URL='https://pvjzppwipiajnowrmsjd.supabase.co';
+const SB_KEY='sb_publishable_YPM4xVUWbx-jKGf6-RuoXg_BiVmpLw2';
+const CODE_RE=/^CH\d{1,3}$/;
+// the deferred CDN script has run by window load; the timeout covers a blocked CDN
+const capsReady=Promise.race([new Promise(r=>addEventListener('load',r)),new Promise(r=>setTimeout(r,12000))]).then(()=>{
+  if(window.supabase)cap.sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+});
 let syncState='connecting';
 function setSync(st){syncState=st;renderRight();}
 
 async function joinLessonRoom(){
   await capsReady;
-  if(!cap.room){setSync('off');return;}
+  if(!cap.sb){setSync('off');return;}
   try{
-    cap.lroom=await cap.room.join(roomName(S.lesson));
-    cap.lroom.onPeers(ch=>onPeers(ch.peers),()=>setSync('off'));
-    cap.lroom.onConnection(c=>{ if(c&&syncState!=='live')setSync('live'); });
-    setSync('live');
-    pushPresence();
+    const ch=cap.sb.channel('lesson:'+S.lesson,{config:{presence:{key:S.role==='t'?'t':S.me}}});
+    ch.on('presence',{event:'sync'},()=>onPeers(Object.values(ch.presenceState()).flat()));
+    if(S.role==='t')ch.on('postgres_changes',{event:'*',schema:'public',table:'responses',filter:'lesson=eq.'+S.lesson},e=>{applyRow(e.new,'live');renderRight();refreshTeacherCounts();});
+    ch.subscribe(st=>{
+      if(st!=='SUBSCRIBED'){setSync('off');return;}
+      // also runs after a reconnect: re-announce and catch up on anything missed
+      cap.lroom=ch;lastPres='';setSync('live');pushPresence();
+      if(S.role==='t')loadResponses();else studentDbWrite();
+    });
   }catch(e){setSync('off');}
 }
 function onPeers(peers){
   if(S.role==='t'){
     const live={};
-    for(const p of peers){
-      const pr=p.presence||{};
-      if(pr.role!=='s'||pr.lesson!==S.lesson||!/^CH\d{1,3}$/.test(pr.code||''))continue;
+    for(const pr of peers){
+      if(pr.role!=='s'||pr.lesson!==S.lesson||!CODE_RE.test(pr.code||''))continue;
       live[pr.code]=true;
-      mergeResult(pr.code,pr.a,pr.dl,pr.t,'live');
     }
     S.livePeers=live; renderRight(); refreshTeacherCounts();
   }else{
-    const t=peers.find(p=>p.presence&&p.presence.role==='t'&&p.presence.lesson===S.lesson);
+    const t=peers.filter(p=>p.role==='t'&&p.lesson===S.lesson&&typeof p.at==='number').sort((a,b)=>b.at-a.at)[0];
     if(t){
-      const pr=t.presence; S.teacherSeen=true;
-      S.size=pr.size||S.size;
-      if(typeof pr.rem==='number'){
-        const el=pr.run?(Date.now()-t.updatedAt)/1000:0;
-        S.timer.rem=Math.max(0,pr.rem-el); S.timer.run=!!pr.run; S.timer.last=performance.now();
+      S.teacherSeen=true;
+      if(Number.isInteger(t.size)&&t.size>=1&&t.size<=60)S.size=t.size;
+      if(typeof t.rem==='number'&&t.rem>=0&&t.rem<=TOTAL){
+        const el=t.run?Math.max(0,Date.now()-t.at)/1000:0;
+        S.timer.rem=Math.max(0,t.rem-el); S.timer.run=!!t.run; S.timer.last=performance.now();
         drawClock();
       }
-      if(typeof pr.phase==='number'&&pr.phase!==S.teacherPhase){S.teacherPhase=pr.phase; if(S.follow)gotoPhase(pr.phase,true);}
+      if(Number.isInteger(t.phase)&&t.phase>=0&&t.phase<PHASES.length&&t.phase!==S.teacherPhase){S.teacherPhase=t.phase; if(S.follow)gotoPhase(t.phase,true);}
     }else S.teacherSeen=false;
     renderRight();
   }
 }
-let presT=null;
+let presT=null,lastPres='';
 function pushPresence(){
   if(!cap.lroom)return;
   clearTimeout(presT);
   presT=setTimeout(()=>{
     let p;
-    if(S.role==='t')p={role:'t',lesson:S.lesson,phase:S.phase,rem:Math.round(S.timer.rem),run:S.timer.run,size:S.size};
-    else p={role:'s',lesson:S.lesson,code:S.me,a:compactMine(),dl:S.mine.dl||null,t:Date.now()};
-    cap.lroom.presence(p).catch(()=>{});
+    if(S.role==='t')p={role:'t',lesson:S.lesson,phase:S.phase,rem:Math.round(S.timer.rem),run:S.timer.run,size:S.size,at:Date.now()};
+    else p={role:'s',lesson:S.lesson,code:S.me};
+    const s=JSON.stringify(p);
+    if(s===lastPres)return;
+    lastPres=s;
+    cap.lroom.track(p).catch(()=>{});
   },150);
 }
 function compactMine(){const a={};for(const k of [...CORE,'d','x1'])if(S.mine[k]!=null)a[k]=S.mine[k];return a;}
@@ -534,6 +541,9 @@ function mergeResult(code,a,dl,t,src){
   const same=prev&&JSON.stringify(prev.a)===JSON.stringify(clean)&&prev.dl===(dl||null);
   S.results[code]={a:clean,dl:['g','y','r'].includes(dl)?dl:null,t:t||Date.now(),src};
   if(!same)saveSession();
+}
+function applyRow(r,src){
+  if(r&&r.lesson===S.lesson&&CODE_RE.test(r.code||''))mergeResult(r.code,r.answers,r.level,Date.parse(r.updated_at),src);
 }
 function grade(code){
   const r=S.results[code]; if(!r)return null;
@@ -552,36 +562,66 @@ let saveT=null,saving=false,saveAgain=false;
 function saveSession(){
   if(S.role!=='t')return;
   ls.set('rl_t_'+S.lesson,{size:S.size,results:S.results});
-  if(!cap.db)return;
+  if(!cap.sb)return;
   clearTimeout(saveT); saveT=setTimeout(doSave,1500);
 }
 async function doSave(){
   if(saving){saveAgain=true;return;}
   saving=true;
-  try{await cap.db.doc('sessions/'+S.lesson).set({lesson:S.lesson,size:S.size,results:S.results,updated:Date.now()});}catch(e){}
+  try{await cap.sb.from('sessions').upsert({lesson:S.lesson,size:S.size,results:S.results});}catch(e){}
   saving=false; if(saveAgain){saveAgain=false;doSave();}
 }
 async function loadSession(){
   const loc=ls.get('rl_t_'+S.lesson);
   if(loc){S.size=loc.size||S.size;Object.assign(S.results,loc.results||{});}
   await capsReady;
-  if(!cap.db)return;
+  if(!cap.sb)return;
   try{
-    const snap=await cap.db.doc('sessions/'+S.lesson).get();
-    if(snap.exists){const d=snap.data();S.size=d.size||S.size;for(const [c,r] of Object.entries(d.results||{}))mergeResult(c,r.a,r.dl,r.t,r.src||'saved');}
-    cap.db.collection('sessions/'+S.lesson+'/students').onSnapshot(qs=>{
-      qs.docs.forEach(doc=>{const d=doc.data();if(d&&/^CH\d{1,3}$/.test(doc.id))mergeResult(doc.id,d.a,d.dl,d.t,'db');});
-      renderRight();
-    },()=>{});
+    const {data:d}=await cap.sb.from('sessions').select('size,results').eq('lesson',S.lesson).maybeSingle();
+    if(d){
+      if(Number.isInteger(d.size)&&d.size>=1&&d.size<=60)S.size=d.size;
+      // codes and src are checked here because they end up in the CSV
+      for(const [c,r] of Object.entries(d.results||{}))if(CODE_RE.test(c)&&r)mergeResult(c,r.a,r.dl,r.t,['live','db','manual','saved'].includes(r.src)?r.src:'saved');
+    }
+    await doSave(); // creates the row, which also reserves this lesson code
   }catch(e){}
   renderRight();
 }
-/* student db write attempt (works when the student account may write) */
-let sdbOk=true;
-async function studentDbWrite(){
-  if(!cap.db||!sdbOk)return;
-  try{await cap.db.doc('sessions/'+S.lesson+'/students/'+S.me).set({a:compactMine(),dl:S.mine.dl||null,t:Date.now()});}
-  catch(e){sdbOk=false;}
+async function loadResponses(){
+  try{
+    const {data}=await cap.sb.from('responses').select('*').eq('lesson',S.lesson);
+    (data||[]).forEach(r=>applyRow(r,'db'));
+  }catch(e){}
+  renderRight();refreshTeacherCounts();
+}
+/* new codes must not land on a past class's saved rows */
+async function newLessonCode(){
+  await capsReady;
+  let c;
+  for(let i=0;i<5;i++){
+    c='RL-'+String(Math.floor(1000+Math.random()*9000));
+    if(!cap.sb)break;
+    try{const {data,error}=await cap.sb.from('sessions').select('lesson').eq('lesson',c).maybeSingle();if(error||!data)break;}catch(e){break;}
+  }
+  return c;
+}
+/* student write: one request at a time, retried until it lands */
+let wT=null,wBusy=false,wAgain=false;
+function studentDbWrite(){
+  if(S.role!=='s')return;
+  clearTimeout(wT); wT=setTimeout(doStudentWrite,200);
+}
+async function doStudentWrite(){
+  const a=compactMine();
+  if(!cap.sb||!Object.keys(a).length)return;
+  if(wBusy){wAgain=true;return;}
+  wBusy=true;
+  let failed=false;
+  try{const {error}=await cap.sb.from('responses').upsert({lesson:S.lesson,code:S.me,answers:a,level:S.mine.dl||null});failed=!!error;}
+  catch(e){failed=true;}
+  wBusy=false;
+  if(wAgain){wAgain=false;doStudentWrite();}
+  else if(failed){clearTimeout(wT);wT=setTimeout(doStudentWrite,5000);}
 }
 
 /* =========================================================
@@ -601,9 +641,9 @@ function route(){
 window.addEventListener('hashchange',route);
 
 /* teacher setup */
-$('genBtn').onclick=()=>{
+$('genBtn').onclick=async()=>{
   const n=Math.max(1,Math.min(60,parseInt($('classSize').value)||25));
-  S.size=n; S.lesson='RL-'+String(Math.floor(1000+Math.random()*9000));
+  S.size=n; S.lesson=await newLessonCode();
   $('genCode').textContent=S.lesson;
   $('codeGrid').innerHTML=Array.from({length:n},(_,i)=>`<span>CH${i+1}</span>`).join('');
   $('genOut').classList.remove('hidden');
@@ -960,7 +1000,7 @@ function refreshEvaluate(){
     }
     const score=CORE.filter(k=>S.mine[k]===Q[k].ans).length;
     const lv=S.mine.dl||levelOf(score);
-    if(!S.mine.dl){S.mine.dl=lv;ls.set('rl_s_'+S.lesson+'_'+S.me,S.mine);pushPresence();}
+    if(!S.mine.dl){S.mine.dl=lv;ls.set('rl_s_'+S.lesson+'_'+S.me,S.mine);pushPresence();studentDbWrite();}
     if(c.dataset.lv===lv)return;
     c.dataset.lv=lv;
     c.innerHTML=`<div class="lvlbanner ${lv}">${LV[lv].emoji} You scored ${score}/5 — your level: <b>${LV[lv].name}</b></div>${qHTML(DIFF[lv])}`;
@@ -1300,7 +1340,7 @@ function renderTeacherRight(rp){
     <div class="resp" style="margin-top:4px">For students whose device can’t sync live.</div>
     <div class="sect-t">Settings</div>
     <label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="autoAdv" ${S.autoAdvance?'checked':''}> Move to the next phase when its time ends</label>
-    ${syncState==='off'?`<div class="fb no" style="font-size:12.5px">Live sync needs the students to open this page signed in to Claude, with the page shared to them by email from the Share menu. Students can always give you their backup code.</div>`:''}
+    ${syncState==='off'?`<div class="fb no" style="font-size:12.5px">Live sync is not connected right now. Students can always give you their backup code.</div>`:''}
   </div>`;
   rp.querySelectorAll('[data-dl]').forEach(b=>b.onclick=downloadCSV);
   rp.querySelectorAll('[data-copy]').forEach(b=>b.onclick=copyCSV);
@@ -1344,8 +1384,6 @@ function buildCSV(){
 }
 async function downloadCSV(){
   const csv=buildCSV();const name=`RateLaws_${S.lesson}_results.csv`;
-  await capsReady;
-  if(cap.dl){try{await cap.dl.save({filename:name,data:csv});toast('✅ Data file saved');return;}catch(e){if(e&&e.code==='declined'){toast('Download cancelled');return;}}}
   try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();a.remove();toast('⬇ Downloading…');}catch(e){copyCSV();}
 }
 async function copyCSV(){
