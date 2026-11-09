@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chemistry-Hub-Mr.Hesham · Determining Rate Laws (Copy)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sand:#f5ede1; --sand2:#ead9c0; --sand3:#d8bf9c; --brown:#8a6847; --brown-d:#4f3a27;
+  --sky:#e3f1fb; --sky2:#b9dcf3; --blue:#3a82bf; --blue-d:#1f5784;
+  --gold:#c9a227; --gold-l:#f3e2a6; --green:#3f9460; --green-l:#dcf0e2;
+  --yellow:#e2ad12; --yellow-l:#fbefc4; --red:#c4473b; --red-l:#f8dcd8;
+  --ink:#2f261d; --muted:#7b6a58; --card:#fffdf9; --line:#e4d5bf;
+  --r:14px; --shadow:0 2px 10px rgba(79,58,39,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--sand) 0%,#f8f2e8 45%,var(--sky) 100%);font-size:15px;line-height:1.45}
+h1,h2,h3,h4{font-family:Fredoka,Nunito,sans-serif;margin:0;font-weight:600;letter-spacing:.2px}
+button{font-family:inherit;cursor:pointer}
+.hidden{display:none!important}
+sub,sup{line-height:0}
+
+/* ---------- Landing ---------- */
+#landing{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.land-card{max-width:880px;width:100%;background:var(--card);border-radius:22px;box-shadow:0 10px 40px rgba(79,58,39,.15);overflow:hidden;border:1px solid var(--line)}
+.land-top{background:linear-gradient(120deg,var(--brown-d),var(--brown) 55%,#a7845c);color:#fff;padding:30px 34px;position:relative;overflow:hidden}
+.land-top h1{font-size:34px}
+.land-top .hub{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(243,226,166,.5);color:var(--gold-l);padding:4px 12px;border-radius:30px;font-weight:700;font-size:13px;margin-bottom:12px}
+.land-top p{margin:8px 0 0;opacity:.92}
+.land-top svg.deco{position:absolute;right:-10px;top:-10px;opacity:.25}
+.land-meta{display:flex;flex-wrap:wrap;gap:10px;padding:18px 34px;background:var(--sky);border-bottom:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--sky2);border-radius:30px;padding:5px 12px;font-size:13px}
+.chip b{color:var(--blue-d)}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:28px 34px 34px}
+.role{border:2px solid var(--line);border-radius:18px;padding:22px;background:#fff;text-align:left;transition:.2s;display:flex;flex-direction:column;gap:8px}
+.role:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(58,130,191,.18);border-color:var(--blue)}
+.role .ic{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-size:28px}
+.role h2{font-size:22px}
+.role p{margin:0;color:var(--muted);font-size:14px}
+.role.t .ic{background:var(--gold-l)} .role.s .ic{background:var(--sky)}
+@media(max-width:640px){.roles{grid-template-columns:1fr}}
+
+/* ---------- Setup screens ---------- */
+.setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.setup .box{max-width:620px;width:100%;background:var(--card);border-radius:20px;padding:28px;box-shadow:0 10px 40px rgba(79,58,39,.13);border:1px solid var(--line)}
+.setup h2{font-size:26px;margin-bottom:6px}
+.setup p{color:var(--muted);margin:4px 0 14px}
+.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.field label{font-weight:800;font-size:13px;color:var(--brown-d);text-transform:uppercase;letter-spacing:.6px}
+.field input,.field select{font:inherit;font-size:18px;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:#fff;outline:none}
+.field input:focus{border-color:var(--blue)}
+.btn{border:none;border-radius:12px;padding:11px 18px;font-weight:800;font-size:15px;background:var(--blue);color:#fff;transition:.15s;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.gold{background:var(--gold);color:#2b2003}
+.btn.green{background:var(--green)}
+.btn.ghost{background:transparent;color:var(--brown-d);border:2px solid var(--line)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:9px}
+.err{color:var(--red);font-weight:700;min-height:20px;font-size:14px}
+.codegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;margin-top:10px;max-height:180px;overflow:auto}
+.codegrid span{background:var(--sky);border:1px solid var(--sky2);border-radius:8px;text-align:center;padding:5px 0;font-weight:800;color:var(--blue-d);font-size:13px}
+.bigcode{font-family:Fredoka;font-size:44px;letter-spacing:3px;color:var(--brown-d);background:var(--gold-l);border:2px dashed var(--gold);border-radius:16px;text-align:center;padding:8px 0;margin:6px 0 4px}
+.back{background:none;border:none;color:var(--muted);font-weight:700;margin-bottom:8px;padding:0}
+
+/* ---------- App shell ---------- */
+#app{height:100vh;display:flex;flex-direction:column}
+header.top{display:flex;align-items:center;gap:14px;padding:8px 16px;background:linear-gradient(110deg,var(--brown-d),var(--brown));color:#fff;flex-wrap:wrap}
+.brand{font-family:Fredoka;font-size:17px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.brand small{display:block;font-family:Nunito;font-size:11px;color:var(--gold-l);font-weight:700}
+.meta{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.meta .m{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:3px 10px;font-size:12.5px}
+.meta .m b{color:var(--gold-l);font-weight:800;margin-right:4px}
+.timer{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.18);padding:5px 8px 5px 12px;border-radius:12px;border:1px solid rgba(243,226,166,.35)}
+.timer .clock{font-family:Fredoka;font-size:26px;min-width:84px;text-align:center;color:#fff;font-variant-numeric:tabular-nums}
+.timer .clock.warn{color:var(--gold-l)} .timer .clock.end{color:#ffb4a8;animation:blink 1s infinite}
+.timer button{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:9px;font-size:15px}
+.timer button:hover{background:rgba(255,255,255,.28)}
+.sessinfo{font-size:12px;background:var(--gold);color:#2b2003;border-radius:9px;padding:4px 9px;font-weight:800;white-space:nowrap}
+@keyframes blink{50%{opacity:.4}}
+
+/* phase strip */
+.phases{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:10px 16px;background:rgba(255,255,255,.55);border-bottom:1px solid var(--line)}
+.ph{position:relative;border-radius:14px;border:2px solid var(--line);background:#fff;padding:8px 12px;text-align:left;display:flex;align-items:center;gap:10px;overflow:hidden;transition:.2s}
+.ph:hover{border-color:var(--sky2);transform:translateY(-1px)}
+.ph .n{width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center;font-size:18px;background:var(--sky)}
+.ph .t{font-family:Fredoka;font-size:16px;line-height:1.1}
+.ph .s{font-size:11.5px;color:var(--muted);font-weight:700}
+.ph .bar{position:absolute;left:0;bottom:0;height:4px;background:var(--gold);width:0;transition:width .8s}
+.ph.cur{border-color:var(--gold);background:linear-gradient(180deg,#fffaf0,#fff6df);box-shadow:0 0 0 4px rgba(201,162,39,.18)}
+.ph.cur .n{background:var(--gold);color:#fff}
+.ph.done{border-color:#b8dcc4;background:#f6fbf7}
+.ph.done .n{background:var(--green);color:#fff}
+.ph .chk{margin-left:auto;font-size:13px;font-weight:800;color:var(--green)}
+@media(max-width:900px){.ph .s{display:none}.ph{padding:6px}.ph .t{font-size:13px}}
+
+/* main grid */
+.main{flex:1;display:grid;grid-template-columns:250px minmax(0,1fr) 340px;gap:12px;padding:12px 16px;min-height:0}
+.main.student{grid-template-columns:250px minmax(0,1fr) 250px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:auto;min-height:0}
+.panel .ph-h{position:sticky;top:0;background:var(--card);padding:12px 14px 8px;border-bottom:1px solid var(--line);z-index:2}
+.panel .ph-h h3{font-size:16px;display:flex;align-items:center;gap:6px}
+.panel .in{padding:12px 14px}
+@media(max-width:1150px){.main,.main.student{grid-template-columns:1fr;overflow:auto}.panel{overflow:visible}}
+
+/* left panel */
+.lo{display:flex;gap:9px;margin-bottom:10px;background:var(--sky);border-radius:12px;padding:10px;border:1px solid var(--sky2)}
+.lo .num{flex:none;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;display:grid;place-items:center;font-size:13px}
+.lo p{margin:0;font-size:13.5px}
+.kw{border-left:4px solid var(--gold);background:#fffaf0;border-radius:0 10px 10px 0;padding:8px 10px;margin-bottom:8px}
+.kw b{font-family:Fredoka;font-weight:600;color:var(--brown-d);font-size:15px}
+.kw p{margin:2px 0 0;font-size:13px;color:var(--ink)}
+.sect-t{font-size:12px;font-weight:800;color:var(--brown);text-transform:uppercase;letter-spacing:.8px;margin:14px 0 8px}
+.lvl-legend div{display:flex;align-items:center;gap:8px;font-size:13px;margin:5px 0}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+.dot.g{background:var(--green)}.dot.y{background:var(--yellow)}.dot.r{background:var(--red)}
+
+/* center */
+.stage{padding:0;display:flex;flex-direction:column}
+.stage-h{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,#fffaf0,var(--card));position:sticky;top:0;z-index:5}
+.stage-h .big{font-size:30px}
+.stage-h h2{font-size:22px}
+.stage-h .sub{color:var(--muted);font-size:13px;font-weight:700}
+.stage-h .nav{margin-left:auto;display:flex;gap:6px}
+.phase-sec{padding:16px 18px 30px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.card h3{font-size:18px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card .tag{font-size:11px;font-weight:800;padding:3px 8px;border-radius:20px;background:var(--sky);color:var(--blue-d);text-transform:uppercase;letter-spacing:.5px}
+.tag.gold{background:var(--gold-l);color:#6d560b}
+.tag.uae{background:#e7f3ea;color:#1f6b3b}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+.flip{perspective:800px;height:120px;cursor:pointer}
+.flip .inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.on .inner{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-weight:700}
+.flip .f{background:var(--sky);border:2px solid var(--sky2);color:var(--blue-d)}
+.flip .b{background:var(--gold-l);border:2px solid var(--gold);transform:rotateY(180deg);font-weight:600;font-size:14px}
+.flips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:800px){.flips{grid-template-columns:1fr}}
+.prompt{background:linear-gradient(90deg,var(--gold-l),#fff7de);border:1px solid var(--gold);border-radius:12px;padding:12px 14px;font-weight:700;margin:8px 0}
+table.data{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px;background:#fff}
+table.data th{background:var(--sand2);color:var(--brown-d);padding:7px;border:1px solid var(--sand3);font-family:Fredoka;font-weight:600}
+table.data td{padding:6px;border:1px solid var(--line);text-align:center}
+table.data tr.hl td{background:var(--gold-l)}
+.eq{font-family:Fredoka;font-size:22px;text-align:center;color:var(--blue-d);padding:8px;background:var(--sky);border-radius:12px;margin:8px 0}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:s;position:relative;padding:8px 10px 8px 44px;margin-bottom:8px;background:#fbf7f0;border-radius:10px}
+.steps li::before{content:counter(s);position:absolute;left:10px;top:8px;width:24px;height:24px;border-radius:50%;background:var(--brown);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.myth{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:800px){.myth{grid-template-columns:1fr}}
+.myth .flip{height:150px}
+.myth .flip .f{background:var(--red-l);border-color:#e9aaa2;color:#7c2219}
+.myth .flip .b{background:var(--green-l);border-color:#9fd1af}
+
+/* questions */
+.q{border:2px solid var(--sky2);border-radius:16px;padding:14px 16px;background:linear-gradient(180deg,#fff,#f8fcff);margin-bottom:14px}
+.q.lv-g{border-color:var(--green);background:linear-gradient(180deg,#fff,#f1faf4)}
+.q.lv-y{border-color:var(--yellow);background:linear-gradient(180deg,#fff,#fffaea)}
+.q.lv-r{border-color:var(--red);background:linear-gradient(180deg,#fff,#fdf2f0)}
+.q .qh{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.q .qn{background:var(--blue);color:#fff;font-weight:800;border-radius:8px;padding:2px 9px;font-size:13px}
+.q.lv-g .qn{background:var(--green)}.q.lv-y .qn{background:var(--yellow);color:#3b2c00}.q.lv-r .qn{background:var(--red)}
+.q .skill{font-size:12px;color:var(--muted);font-weight:700}
+.q .stem{font-weight:700;margin-bottom:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:700px){.opts{grid-template-columns:1fr}}
+.opt{position:relative;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px 10px 44px;font-size:15px;font-weight:600;color:var(--ink);overflow:hidden;min-height:46px}
+.opt .L{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:8px;background:var(--sand2);display:grid;place-items:center;font-weight:800;color:var(--brown-d);z-index:1}
+.opt .fill{position:absolute;left:0;top:0;bottom:0;background:rgba(58,130,191,.13);width:0;transition:width .5s}
+.opt .cnt{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:800;color:var(--blue-d);z-index:1}
+.opt span.tx{position:relative;z-index:1}
+.opt:hover:not(:disabled){border-color:var(--blue)}
+.opt.sel{border-color:var(--blue);background:var(--sky)}
+.opt.sel .L{background:var(--blue);color:#fff}
+.opt.right{border-color:var(--green);background:var(--green-l)}
+.opt.right .L{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red);background:var(--red-l)}
+.opt.wrong .L{background:var(--red);color:#fff}
+.opt:disabled{cursor:default}
+.qfoot{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.fb{font-weight:700;font-size:14px;border-radius:10px;padding:8px 12px;margin-top:8px}
+.fb.ok{background:var(--green-l);color:#185a30}.fb.no{background:var(--red-l);color:#7c2219}.fb.info{background:var(--sky);color:var(--blue-d)}
+.resp{font-size:12.5px;color:var(--muted);font-weight:700}
+
+/* video */
+.vwrap{position:relative;background:radial-gradient(ellipse at 50% 30%,#1d4a6e 0%,#0e2438 60%,#0a1a29 100%);border-radius:16px;overflow:hidden;aspect-ratio:16/9;width:100%;user-select:none;border:2px solid #2d5c80}
+.vwrap canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab}
+.vwrap canvas:active{cursor:grabbing}
+.vwrap.pfs{position:fixed;inset:0;z-index:9999;border-radius:0;aspect-ratio:auto;border:none}
+.vwrap:fullscreen{border-radius:0;border:none;aspect-ratio:auto}
+.vh-tl{position:absolute;left:14px;top:12px;color:#fff;pointer-events:none}
+.vh-tl .sc{font-size:11px;letter-spacing:2px;color:var(--gold-l);font-weight:800;text-transform:uppercase}
+.vh-tl h4{font-family:Fredoka;font-size:max(15px,calc(var(--vs,10px)*2.3));text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.vh-tr{position:absolute;right:12px;top:12px;display:flex;gap:6px;align-items:center}
+.arbadge{font-size:11px;font-weight:800;color:#bfe6ff;border:1px solid #5fb3e8;border-radius:20px;padding:3px 9px;background:rgba(10,30,50,.5);letter-spacing:1px}
+.vh-panel{position:absolute;right:12px;top:44px;max-width:34%;background:rgba(10,28,45,.78);border:1px solid rgba(243,226,166,.45);border-radius:14px;padding:.6em .9em;color:#fff;font-size:max(10px,calc(var(--vs,10px)*1.15));backdrop-filter:blur(4px);transition:opacity .5s, transform .5s}
+.vh-panel.fade{opacity:0;transform:translateY(8px)}
+.vh-panel .bigeq{font-family:Fredoka;font-size:1.5em;color:var(--gold-l);text-align:center;margin:4px 0}
+.vh-panel table{border-collapse:collapse;width:100%;font-size:.92em}
+.vh-panel td,.vh-panel th{border:1px solid rgba(255,255,255,.25);padding:3px 6px;text-align:center}
+.vh-panel th{color:var(--gold-l)}
+.vh-panel tr.hl td{background:rgba(201,162,39,.35)}
+.vh-panel .row{display:flex;justify-content:space-between;gap:10px;padding:2px 0;border-bottom:1px dashed rgba(255,255,255,.2)}
+.vcap{position:absolute;left:50%;bottom:58px;transform:translateX(-50%);width:min(92%,980px);text-align:center;color:#fff;font-size:max(12px,calc(var(--vs,10px)*1.6));font-weight:700;background:rgba(0,0,0,.62);padding:7px 14px;border-radius:10px;line-height:1.35;min-height:1em}
+.vcap:empty{display:none}
+.vctrl{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:8px;padding:8px 12px;background:linear-gradient(0deg,rgba(0,0,0,.7),rgba(0,0,0,0))}
+.vctrl button{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:9px;height:34px;min-width:36px;padding:0 9px;font-weight:800;font-size:14px}
+.vctrl button:hover{background:rgba(255,255,255,.26)}
+.vctrl button.on{background:var(--gold);color:#2b2003;border-color:var(--gold)}
+.vprog{flex:1;height:8px;background:rgba(255,255,255,.22);border-radius:6px;position:relative;cursor:pointer}
+.vprog .pf{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--gold),#f3d36b);border-radius:6px}
+.vprog .tick{position:absolute;top:-2px;width:2px;height:12px;background:rgba(255,255,255,.5)}
+.vtime{color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vbig{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:86px;height:86px;border-radius:50%;background:rgba(201,162,39,.92);border:none;color:#2b2003;font-size:34px;box-shadow:0 0 0 10px rgba(201,162,39,.25)}
+
+/* lab */
+.lab{display:grid;grid-template-columns:260px 1fr;gap:14px}
+@media(max-width:800px){.lab{grid-template-columns:1fr}}
+.pick{display:flex;gap:6px;margin:4px 0 10px}
+.pick button{flex:1;border:2px solid var(--line);background:#fff;border-radius:10px;padding:7px 0;font-weight:800;color:var(--brown-d)}
+.pick button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.pick.y button.on{background:var(--gold);border-color:var(--gold);color:#2b2003}
+.beaker{height:120px;border-radius:12px;background:var(--sky);position:relative;overflow:hidden;border:1px solid var(--sky2)}
+.beaker canvas{width:100%;height:100%}
+.labtbl td.sel{background:var(--sky)}
+.labtbl tr{cursor:pointer}
+.cmp{background:#fbf7f0;border-radius:10px;padding:8px 10px;font-size:14px;margin-top:6px}
+
+/* right panel results */
+.rtable{width:100%;border-collapse:collapse;font-size:12.5px}
+.rtable th{position:sticky;top:0;background:var(--sand2);color:var(--brown-d);font-weight:800;padding:5px 2px;font-size:11.5px;z-index:1}
+.rtable td{text-align:center;padding:4px 2px;border-bottom:1px solid var(--line)}
+.rtable td.code{font-weight:800;text-align:left;padding-left:6px;white-space:nowrap}
+.rtable tr.absent td{color:#bfb2a2}
+.c-ok{color:var(--green);font-weight:900}.c-no{color:var(--red);font-weight:900}.c-na{color:#cdbfae}
+.lvlb{display:inline-block;border-radius:6px;padding:1px 5px;font-size:10.5px;font-weight:800;color:#fff}
+.lvlb.g{background:var(--green)}.lvlb.y{background:var(--yellow);color:#3b2c00}.lvlb.r{background:var(--red)}
+.live{display:inline-block;width:7px;height:7px;border-radius:50%;background:#cbbba6;margin-right:4px;vertical-align:middle}
+.live.on{background:#29b45a;box-shadow:0 0 0 3px rgba(41,180,90,.2)}
+.stat{display:flex;gap:8px;margin:8px 0}
+.stat div{flex:1;background:var(--sky);border-radius:10px;padding:6px;text-align:center}
+.stat b{display:block;font-family:Fredoka;font-size:20px;color:var(--blue-d)}
+.stat span{font-size:11px;font-weight:700;color:var(--muted)}
+.qbar{display:flex;align-items:center;gap:6px;font-size:12px;margin:4px 0}
+.qbar .bb{flex:1;height:9px;background:#efe6d8;border-radius:5px;overflow:hidden}
+.qbar .bb i{display:block;height:100%;background:var(--green)}
+.qbar.weak .bb i{background:var(--red)}
+.syncpill{font-size:11px;font-weight:800;border-radius:20px;padding:2px 8px;background:#eee;color:#666}
+.syncpill.ok{background:var(--green-l);color:#185a30}.syncpill.bad{background:var(--red-l);color:#7c2219}
+.groups{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:900px){.groups{grid-template-columns:1fr}}
+.grp{border-radius:12px;padding:10px;border:2px solid}
+.grp.g{border-color:var(--green);background:var(--green-l)}.grp.y{border-color:var(--yellow);background:var(--yellow-l)}.grp.r{border-color:var(--red);background:var(--red-l)}
+.grp h4{font-size:16px}
+.grp .codes{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.grp .codes span{background:#fff;border-radius:6px;padding:1px 6px;font-weight:800;font-size:12px}
+.lvlbanner{border-radius:14px;padding:12px 16px;color:#fff;font-family:Fredoka;font-size:20px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.lvlbanner.g{background:var(--green)}.lvlbanner.y{background:var(--yellow);color:#3b2c00}.lvlbanner.r{background:var(--red)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--brown-d);color:#fff;padding:10px 18px;border-radius:12px;font-weight:700;z-index:10000;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:opacity .3s}
+.mycodes{font-family:Fredoka;font-size:24px;color:var(--brown-d);text-align:center;background:var(--gold-l);border-radius:12px;padding:6px;margin:6px 0}
+.backup{font-family:ui-monospace,Menlo,monospace;background:var(--sand);border:1px dashed var(--brown);border-radius:8px;padding:6px;text-align:center;font-weight:800;letter-spacing:1px;user-select:all}
+.prog-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.dl-wrap{border:2px solid var(--gold);background:linear-gradient(90deg,#fff7df,#fff);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.scene-svg{width:100%;height:auto;border-radius:12px;display:block}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.thumbs button{border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font-weight:800}
+.thumbs button.on{border-color:var(--gold);background:var(--gold-l)}
+</style>
+</head>
+<body>
+
+<!-- ================= LANDING ================= -->
+<section id="landing">
+  <div class="land-card">
+    <div class="land-top">
+      <svg class="deco" width="220" height="220" viewBox="0 0 200 200"><g fill="none" stroke="#f3e2a6" stroke-width="3"><ellipse cx="100" cy="100" rx="90" ry="34"/><ellipse cx="100" cy="100" rx="90" ry="34" transform="rotate(60 100 100)"/><ellipse cx="100" cy="100" rx="90" ry="34" transform="rotate(120 100 100)"/></g><circle cx="100" cy="100" r="14" fill="#f3e2a6"/></svg>
+      <div class="hub">⚗️ Chemistry-Hub-Mr.Hesham</div>
+      <h1>Determining Rate Laws from Experimental Data</h1>
+      <p>An interactive 45-minute 5E lesson · Method of Initial Rates</p>
+    </div>
+    <div class="land-meta">
+      <span class="chip"><b>Subject:</b> Chemistry</span>
+      <span class="chip"><b>Teacher:</b> Mr. Hesham Eltoukhy</span>
+      <span class="chip"><b>Lesson:</b> Determining Rate Laws</span>
+      <span class="chip"><b>Grade:</b> 11 Advanced</span>
+    </div>
+    <div class="roles">
+      <button class="role t" id="goTeacher"><div class="ic">👨‍🏫</div><h2>Enter as Teacher</h2><p>Create a lesson code, generate student codes (CH1, CH2, …), present the lesson and watch results arrive live.</p></button>
+      <button class="role s" id="goStudent"><div class="ic">🧑‍🎓</div><h2>Enter as Student</h2><p>Type the lesson code and your student code from your teacher, then work through the lesson activities.</p></button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TEACHER SETUP ================= -->
+<section id="tSetup" class="setup hidden">
+  <div class="box">
+    <button class="back" data-back>← Back</button>
+    <h2>👨‍🏫 Teacher setup</h2>
+    <p>Create a code for this lesson, then hand out the student codes. Students type both codes in the student version.</p>
+    <div id="resumeBox" class="hidden prompt" style="display:flex;align-items:center;gap:10px;justify-content:space-between"><span>Resume your last lesson <b id="resumeCode"></b>?</span><button class="btn sm" id="resumeBtn">Resume</button></div>
+    <div class="field"><label>Number of students</label><input id="classSize" type="number" min="1" max="60" value="25"></div>
+    <button class="btn gold" id="genBtn" style="width:100%">✨ Generate lesson code &amp; student codes</button>
+    <div id="genOut" class="hidden">
+      <div class="sect-t">Lesson code</div>
+      <div class="bigcode" id="genCode"></div>
+      <div class="sect-t">Student codes</div>
+      <div class="codegrid" id="codeGrid"></div>
+      <button class="btn green" id="startLesson" style="width:100%;margin-top:14px">▶ Start the lesson</button>
+    </div>
+    <div class="field" style="margin-top:18px"><label>Or open an existing lesson code</label><div style="display:flex;gap:8px"><input id="openCode" placeholder="RL-0000" style="flex:1"><button class="btn ghost" id="openBtn">Open</button></div></div>
+    <div class="err" id="tErr"></div>
+  </div>
+</section>
+
+<!-- ================= STUDENT JOIN ================= -->
+<section id="sSetup" class="setup hidden">
+  <div class="box">
+    <button class="back" data-back>← Back</button>
+    <h2>🧑‍🎓 Join the lesson</h2>
+    <p>Ask your teacher for the lesson code and your student code.</p>
+    <div class="field"><label>Lesson code</label><input id="jLesson" placeholder="RL-0000" autocomplete="off"></div>
+    <div class="field"><label>Your student code</label><input id="jCode" placeholder="CH1" autocomplete="off"></div>
+    <button class="btn" id="joinBtn" style="width:100%">Join lesson →</button>
+    <div class="err" id="sErr"></div>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<section id="app" class="hidden">
+  <header class="top">
+    <div class="brand">⚗️<div>Chemistry-Hub-Mr.Hesham<small id="roleLbl">Teacher view</small></div></div>
+    <div class="meta">
+      <span class="m"><b>Subject</b>Chemistry</span>
+      <span class="m"><b>Teacher</b>Mr. Hesham Eltoukhy</span>
+      <span class="m"><b>Lesson</b>Determining Rate Laws (Method of Initial Rates)</span>
+      <span class="m"><b>Grade</b>11 Advanced</span>
+    </div>
+    <span class="sessinfo" id="sessInfo"></span>
+    <div class="timer">
+      <span title="Lesson countdown">⏱</span>
+      <div class="clock" id="clock">45:00</div>
+      <button id="tPlay" title="Start / pause">▶</button>
+      <button id="tReset" title="Reset to 45:00">↺</button>
+    </div>
+  </header>
+
+  <nav class="phases" id="phases"></nav>
+
+  <div class="main" id="main">
+    <!-- LEFT -->
+    <aside class="panel">
+      <div class="ph-h"><h3>🎯 Learning Outcomes</h3></div>
+      <div class="in">
+        <div class="lo"><div class="num">1</div><p>Determine the <b>order of reaction</b> with respect to each reactant by comparing initial-rate data from experimental trials.</p></div>
+        <div class="lo"><div class="num">2</div><p>Write the <b>rate law</b> for a reaction from experimental data and explain why orders are <b>not</b> taken from the balanced equation.</p></div>
+        <div class="sect-t">🔑 Key words</div>
+        <div class="kw"><b>Rate law</b><p>Rate = k[A]<sup>m</sup>[B]<sup>n</sup> — links rate to concentrations.</p></div>
+        <div class="kw"><b>Reaction order</b><p>The exponent (m, n) showing how much the rate depends on a reactant.</p></div>
+        <div class="kw"><b>Method of initial rates</b><p>Compare starting rates of trials where only one concentration changes.</p></div>
+        <div class="sect-t">🏅 Student levels</div>
+        <div class="lvl-legend">
+          <div><span class="dot g"></span><b>Explorers</b>&nbsp;· 0–2 of 5 correct</div>
+          <div><span class="dot y"></span><b>Innovators</b>&nbsp;· 3–4 of 5 correct</div>
+          <div><span class="dot r"></span><b>Experts</b>&nbsp;· 5 of 5 correct</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER -->
+    <section class="panel stage" id="stage">
+      <div class="stage-h">
+        <div class="big" id="stIcon">💡</div>
+        <div><h2 id="stTitle">Engage</h2><div class="sub" id="stSub"></div></div>
+        <div class="nav"><button class="btn ghost sm" id="prevPh">← Prev</button><button class="btn sm" id="nextPh">Next →</button></div>
+      </div>
+      <div id="phaseHost"></div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="panel" id="rightPanel"></aside>
+  </div>
+</section>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>
+"use strict";
+/* =========================================================
+   DATA
+   ========================================================= */
+const PHASES=[
+ {key:'engage',name:'Engage',icon:'💡',min:5,sub:'Reflection on last lesson · hook · prior knowledge'},
+ {key:'explore',name:'Explore',icon:'🔭',min:10,sub:'3D AR-style video · virtual lab · discover the orders'},
+ {key:'explain',name:'Explain',icon:'🗣️',min:10,sub:'Share findings · the ratio method · fix misconceptions'},
+ {key:'elaborate',name:'Elaborate',icon:'🇦🇪',min:8,sub:'Apply it to a UAE industry problem'},
+ {key:'evaluate',name:'Evaluate',icon:'✅',min:12,sub:'Check · level challenges · closure · exit ticket'}
+];
+const TOTAL=2700;
+const LV={g:{name:'Explorers',cls:'g',emoji:'🟢'},y:{name:'Innovators',cls:'y',emoji:'🟡'},r:{name:'Experts',cls:'r',emoji:'🔴'}};
+const L=['A','B','C','D'];
+
+const tbl=(head,rows,hl)=>`<table class="data"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>${rows.map((r,i)=>`<tr class="${hl&&hl.includes(i)?'hl':''}">${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
+const x10=(a,e)=>`${a} × 10<sup>${e}</sup>`;
+
+const Q={
+ q1:{n:'Q1',phase:0,skill:'Meaning of reaction orders (reflection)',
+   stem:'Reflection on last lesson: in the rate law Rate = k[A]<sup>m</sup>[B]<sup>n</sup>, how are the exponents m and n found?',
+   opts:['From the coefficients in the balanced equation','From experimental data','From the value of the rate constant k','From the masses of the products'],ans:1,
+   exp:'Reaction orders are found by experiment. They often differ from the coefficients in the balanced equation.'},
+ q2:{n:'Q2',phase:1,skill:'Discover an order from lab data',
+   stem:'Use the trials you ran in the virtual lab (X + Y → products). What is the order of the reaction with respect to <b>X</b>?',
+   opts:['Zero order','First order','Second order','Third order'],ans:2,
+   exp:'With [Y] constant, doubling [X] makes the rate 4 times faster: 2<sup>m</sup> = 4, so m = 2.'},
+ q3:{n:'Q3',phase:2,skill:'Ratio method: write a rate law',
+   stem:'2NO(g) + 2H<sub>2</sub>(g) → N<sub>2</sub>(g) + 2H<sub>2</sub>O(g). Use the data to choose the rate law.'+
+     tbl(['Trial','[NO] (M)','[H<sub>2</sub>] (M)','Initial rate (M/s)'],[[1,x10('5.0','−3'),x10('2.5','−3'),x10('3.0','−5')],[2,x10('1.5','−2'),x10('2.5','−3'),x10('9.0','−5')],[3,x10('1.5','−2'),x10('1.0','−2'),x10('3.6','−4')]]),
+   opts:['Rate = k[NO]<sup>2</sup>[H<sub>2</sub>]<sup>2</sup>','Rate = k[NO][H<sub>2</sub>]<sup>2</sup>','Rate = k[NO]<sup>2</sup>[H<sub>2</sub>]','Rate = k[NO][H<sub>2</sub>]'],ans:3,
+   exp:'Trials 1→2: [NO] ×3, rate ×3 → first order in NO. Trials 2→3: [H<sub>2</sub>] ×4, rate ×4 → first order in H<sub>2</sub>. The coefficients (2 and 2) are not the orders.'},
+ q4:{n:'Q4',phase:3,skill:'Apply to a new (UAE) context',
+   stem:'Sulfur recovery (Claus reaction): 2H<sub>2</sub>S + SO<sub>2</sub> → 3S + 2H<sub>2</sub>O. Which rate law fits the data in the table above?',
+   opts:['Rate = k[H<sub>2</sub>S]<sup>2</sup>[SO<sub>2</sub>]','Rate = k[H<sub>2</sub>S][SO<sub>2</sub>]','Rate = k[H<sub>2</sub>S]<sup>2</sup>[SO<sub>2</sub>]<sup>2</sup>','Rate = k[H<sub>2</sub>S][SO<sub>2</sub>]<sup>2</sup>'],ans:0,
+   exp:'Trials 1→2: [H<sub>2</sub>S] ×2, rate ×4 → second order. Trials 2→3: [SO<sub>2</sub>] ×2, rate ×2 → first order.'},
+ q5:{n:'Q5',phase:4,skill:'Recognise zero order',
+   stem:'aA + bB → products. Use the data to choose the rate law.'+
+     tbl(['Trial','[A] (M)','[B] (M)','Initial rate (M/s)'],[[1,'0.1','0.1',x10('2.0','−3')],[2,'0.2','0.1',x10('2.0','−3')],[3,'0.2','0.2',x10('4.0','−3')]]),
+   opts:['Rate = k[A]','Rate = k[A][B]<sup>2</sup>','Rate = k[B]','Rate = k[A]<sup>2</sup>[B]'],ans:2,
+   exp:'Doubling [A] does not change the rate → zero order in A. Doubling [B] doubles the rate → first order in B.'},
+ dg:{n:'Explorers',lvl:'g',phase:4,skill:'Order from a simple doubling',
+   stem:'In two trials, [A] is doubled and everything else stays the same. The initial rate also <b>doubles</b>. What is the order with respect to A?',
+   opts:['Zero order','First order','Second order','Fourth order'],ans:1,exp:'2<sup>m</sup> = 2, so m = 1 (first order).'},
+ dy:{n:'Innovators',lvl:'y',phase:4,skill:'Non-doubling ratios (×1.5)',
+   stem:'aA + bB → products. Choose the rate law.'+
+     tbl(['Trial','[A] (M)','[B] (M)','Rate (M/s)'],[[1,x10('1.00','−6'),x10('3.00','−6'),x10('0.66','−6')],[2,x10('1.00','−6'),x10('6.00','−6'),x10('1.32','−6')],[3,x10('2.00','−6'),x10('9.00','−6'),x10('3.96','−6')],[4,x10('3.00','−6'),x10('9.00','−6'),x10('5.94','−6')]]),
+   opts:['Rate = k[A]<sup>2</sup>[B]','Rate = k[A][B]<sup>2</sup>','Rate = k[A]<sup>2</sup>[B]<sup>2</sup>','Rate = k[A][B]'],ans:3,
+   exp:'Trials 1→2: [B] ×2, rate ×2 → first order in B. Trials 3→4: [A] ×1.5, rate ×1.5 → first order in A.'},
+ dr:{n:'Experts',lvl:'r',phase:4,skill:'Calculate k with units',
+   stem:'Rate = k[A]<sup>2</sup>[B]. When [A] = 0.10 M and [B] = 0.20 M, the rate is 3.0 × 10<sup>−3</sup> M/s. What is k?',
+   opts:['1.5 L<sup>2</sup>/(mol<sup>2</sup>·s)','0.15 L/(mol·s)','1.5 L/(mol·s)','0.015 L<sup>2</sup>/(mol<sup>2</sup>·s)'],ans:0,
+   exp:'k = rate ÷ ([A]<sup>2</sup>[B]) = 3.0×10<sup>−3</sup> ÷ (0.010 × 0.20) = 1.5. Third order overall → units L<sup>2</sup>/(mol<sup>2</sup>·s).'},
+ x1:{n:'Exit',phase:4,skill:'Exit ticket: order from a tripling',
+   stem:'Exit ticket: tripling [X] (all else constant) makes the initial rate <b>9 times</b> faster. What is the order with respect to X?',
+   opts:['First order','Second order','Third order','Ninth order'],ans:1,exp:'3<sup>m</sup> = 9, so m = 2.'}
+};
+const CORE=['q1','q2','q3','q4','q5'];
+const DIFF={g:'dg',y:'dy',r:'dr'};
+const COLS=['q1','q2','q3','q4','q5','d','x1'];
+const levelOf=s=>s<=2?'g':(s<=4?'y':'r');
+
+/* =========================================================
+   STATE
+   ========================================================= */
+const S={role:null,lesson:null,size:25,phase:0,maxPhase:0,
+  timer:{rem:TOTAL,run:false,last:0},autoAdvance:true,
+  results:{},livePeers:{},revealed:{},
+  me:null,mine:{},pending:{},follow:true,teacherSeen:false,teacherPhase:null};
+const cap={room:null,lroom:null,db:null,dl:null,user:null};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(m,ms=2600){const t=$('toast');t.textContent=m;t.classList.remove('hidden');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.add('hidden'),ms)}
+const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* =========================================================
+   CAPABILITIES (live sync)
+   ========================================================= */
+function useCap(name){
+  if(!(window.claude&&typeof window.claude.use==='function'))return Promise.resolve(null);
+  return Promise.race([window.claude.use(name).catch(()=>null),new Promise(r=>setTimeout(()=>r(null),12000))]);
+}
+const capsReady=Promise.all([useCap('room'),useCap('db'),useCap('downloads'),useCap('user')]).then(([r,d,dl,u])=>{cap.room=r;cap.db=d;cap.dl=dl;cap.user=u;});
+const roomName=code=>('rl'+code.replace(/[^0-9a-z]/gi,'')).toLowerCase();
+let syncState='connecting';
+function setSync(st){syncState=st;renderRight();}
+
+async function joinLessonRoom(){
+  await capsReady;
+  if(!cap.room){setSync('off');return;}
+  try{
+    cap.lroom=await cap.room.join(roomName(S.lesson));
+    cap.lroom.onPeers(ch=>onPeers(ch.peers),()=>setSync('off'));
+    cap.lroom.onConnection(c=>{ if(c&&syncState!=='live')setSync('live'); });
+    setSync('live');
+    pushPresence();
+  }catch(e){setSync('off');}
+}
+function onPeers(peers){
+  if(S.role==='t'){
+    const live={};
+    for(const p of peers){
+      const pr=p.presence||{};
+      if(pr.role!=='s'||pr.lesson!==S.lesson||!/^CH\d{1,3}$/.test(pr.code||''))continue;
+      live[pr.code]=true;
+      mergeResult(pr.code,pr.a,pr.dl,pr.t,'live');
+    }
+    S.livePeers=live; renderRight(); refreshTeacherCounts();
+  }else{
+    const t=peers.find(p=>p.presence&&p.presence.role==='t'&&p.presence.lesson===S.lesson);
+    if(t){
+      const pr=t.presence; S.teacherSeen=true;
+      S.size=pr.size||S.size;
+      if(typeof pr.rem==='number'){
+        const el=pr.run?(Date.now()-t.updatedAt)/1000:0;
+        S.timer.rem=Math.max(0,pr.rem-el); S.timer.run=!!pr.run; S.timer.last=performance.now();
+        drawClock();
+      }
+      if(typeof pr.phase==='number'&&pr.phase!==S.teacherPhase){S.teacherPhase=pr.phase; if(S.follow)gotoPhase(pr.phase,true);}
+    }else S.teacherSeen=false;
+    renderRight();
+  }
+}
+let presT=null;
+function pushPresence(){
+  if(!cap.lroom)return;
+  clearTimeout(presT);
+  presT=setTimeout(()=>{
+    let p;
+    if(S.role==='t')p={role:'t',lesson:S.lesson,phase:S.phase,rem:Math.round(S.timer.rem),run:S.timer.run,size:S.size};
+    else p={role:'s',lesson:S.lesson,code:S.me,a:compactMine(),dl:S.mine.dl||null,t:Date.now()};
+    cap.lroom.presence(p).catch(()=>{});
+  },150);
+}
+function compactMine(){const a={};for(const k of [...CORE,'d','x1'])if(S.mine[k]!=null)a[k]=S.mine[k];return a;}
+
+/* teacher side merge */
+function mergeResult(code,a,dl,t,src){
+  if(!a||typeof a!=='object')return;
+  const clean={};
+  for(const k of [...CORE,'d','x1']){const v=a[k];if(Number.isInteger(v)&&v>=0&&v<=3)clean[k]=v;}
+  const prev=S.results[code];
+  if(prev&&prev.t&&t&&prev.t>t&&Object.keys(prev.a).length>=Object.keys(clean).length)return;
+  const same=prev&&JSON.stringify(prev.a)===JSON.stringify(clean)&&prev.dl===(dl||null);
+  S.results[code]={a:clean,dl:['g','y','r'].includes(dl)?dl:null,t:t||Date.now(),src};
+  if(!same)saveSession();
+}
+function grade(code){
+  const r=S.results[code]; if(!r)return null;
+  const out={};let core=0,coreN=0;
+  for(const k of CORE){if(r.a[k]!=null){coreN++;const ok=r.a[k]===Q[k].ans;out[k]=ok;if(ok)core++;}}
+  const lvl=coreN===5?levelOf(core):null;
+  const dl=r.dl||lvl;
+  if(r.a.d!=null&&dl)out.d=r.a.d===Q[DIFF[dl]].ans;
+  if(r.a.x1!=null)out.x1=r.a.x1===Q.x1.ans;
+  const total=Object.values(out).filter(Boolean).length;
+  return {out,core,coreN,lvl,dl,total,answered:Object.keys(out).length};
+}
+
+/* db persistence (teacher) */
+let saveT=null,saving=false,saveAgain=false;
+function saveSession(){
+  if(S.role!=='t')return;
+  ls.set('rl_t_'+S.lesson,{size:S.size,results:S.results});
+  if(!cap.db)return;
+  clearTimeout(saveT); saveT=setTimeout(doSave,1500);
+}
+async function doSave(){
+  if(saving){saveAgain=true;return;}
+  saving=true;
+  try{await cap.db.doc('sessions/'+S.lesson).set({lesson:S.lesson,size:S.size,results:S.results,updated:Date.now()});}catch(e){}
+  saving=false; if(saveAgain){saveAgain=false;doSave();}
+}
+async function loadSession(){
+  const loc=ls.get('rl_t_'+S.lesson);
+  if(loc){S.size=loc.size||S.size;Object.assign(S.results,loc.results||{});}
+  await capsReady;
+  if(!cap.db)return;
+  try{
+    const snap=await cap.db.doc('sessions/'+S.lesson).get();
+    if(snap.exists){const d=snap.data();S.size=d.size||S.size;for(const [c,r] of Object.entries(d.results||{}))mergeResult(c,r.a,r.dl,r.t,r.src||'saved');}
+    cap.db.collection('sessions/'+S.lesson+'/students').onSnapshot(qs=>{
+      qs.docs.forEach(doc=>{const d=doc.data();if(d&&/^CH\d{1,3}$/.test(doc.id))mergeResult(doc.id,d.a,d.dl,d.t,'db');});
+      renderRight();
+    },()=>{});
+  }catch(e){}
+  renderRight();
+}
+/* student db write attempt (works when the student account may write) */
+let sdbOk=true;
+async function studentDbWrite(){
+  if(!cap.db||!sdbOk)return;
+  try{await cap.db.doc('sessions/'+S.lesson+'/students/'+S.me).set({a:compactMine(),dl:S.mine.dl||null,t:Date.now()});}
+  catch(e){sdbOk=false;}
+}
+
+/* =========================================================
+   NAVIGATION / SCREENS
+   ========================================================= */
+function show(id){['landing','tSetup','sSetup','app'].forEach(s=>$(s).classList.toggle('hidden',s!==id));}
+$('goTeacher').onclick=()=>{location.hash='teacher';};
+$('goStudent').onclick=()=>{location.hash='student';};
+document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{location.hash='';show('landing');});
+function route(){
+  if(S.role)return;
+  const h=location.hash.replace('#','');
+  if(h==='teacher'){show('tSetup');const last=ls.get('rl_last_t');if(last){$('resumeBox').classList.remove('hidden');$('resumeCode').textContent=last;}}
+  else if(h==='student'){show('sSetup');const last=ls.get('rl_last_s');if(last){$('jLesson').value=last.lesson||'';$('jCode').value=last.code||'';}}
+  else show('landing');
+}
+window.addEventListener('hashchange',route);
+
+/* teacher setup */
+$('genBtn').onclick=()=>{
+  const n=Math.max(1,Math.min(60,parseInt($('classSize').value)||25));
+  S.size=n; S.lesson='RL-'+String(Math.floor(1000+Math.random()*9000));
+  $('genCode').textContent=S.lesson;
+  $('codeGrid').innerHTML=Array.from({length:n},(_,i)=>`<span>CH${i+1}</span>`).join('');
+  $('genOut').classList.remove('hidden');
+};
+$('startLesson').onclick=()=>startTeacher();
+$('resumeBtn').onclick=()=>{S.lesson=ls.get('rl_last_t');const loc=ls.get('rl_t_'+S.lesson);S.size=(loc&&loc.size)||25;startTeacher();};
+$('openBtn').onclick=()=>{
+  const c=$('openCode').value.trim().toUpperCase();
+  if(!/^RL-\d{4}$/.test(c)){$('tErr').textContent='Lesson codes look like RL-1234.';return;}
+  S.lesson=c;S.size=parseInt($('classSize').value)||25;startTeacher();
+};
+function startTeacher(){
+  S.role='t'; ls.set('rl_last_t',S.lesson);
+  const st=ls.get('rl_tstate_'+S.lesson);
+  if(st){S.phase=st.phase||0;S.maxPhase=st.max||0;S.timer.rem=st.rem??TOTAL;}
+  buildApp(); loadSession(); joinLessonRoom();
+}
+/* student join */
+$('joinBtn').onclick=()=>{
+  const l=$('jLesson').value.trim().toUpperCase().replace(/\s/g,'');
+  const c=$('jCode').value.trim().toUpperCase().replace(/\s/g,'');
+  const lesson=/^RL-?\d{4}$/.test(l)?('RL-'+l.replace(/\D/g,'')):null;
+  if(!lesson){$('sErr').textContent='The lesson code looks like RL-1234.';return;}
+  if(!/^CH\d{1,3}$/.test(c)){$('sErr').textContent='Your student code looks like CH1, CH2, CH3 …';return;}
+  S.role='s';S.lesson=lesson;S.me=c;
+  ls.set('rl_last_s',{lesson,code:c});
+  const saved=ls.get('rl_s_'+lesson+'_'+c); if(saved)S.mine=saved;
+  buildApp(); joinLessonRoom();
+};
+
+/* =========================================================
+   APP BUILD
+   ========================================================= */
+function buildApp(){
+  show('app');
+  $('roleLbl').textContent=S.role==='t'?'Teacher view':'Student view · '+S.me;
+  $('sessInfo').textContent=(S.role==='t'?'Lesson ':'')+S.lesson+(S.role==='s'?' · '+S.me:'');
+  $('main').classList.toggle('student',S.role==='s');
+  if(S.role==='s'){$('tPlay').classList.add('hidden');$('tReset').classList.add('hidden');}
+  buildPhases(); buildPhaseContent(); gotoPhase(S.phase,true); renderRight(); drawClock();
+  requestAnimationFrame(tick);
+}
+function buildPhases(){
+  let acc=0;
+  $('phases').innerHTML=PHASES.map((p,i)=>{const s=acc;acc+=p.min;return `<button class="ph" data-i="${i}"><div class="n">${p.icon}</div><div><div class="t">${i+1}. ${p.name}</div><div class="s">${p.min} min · ${s}–${acc}′</div></div><span class="chk"></span><div class="bar"></div></button>`}).join('');
+  document.querySelectorAll('.ph').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(S.role==='s'&&S.teacherSeen&&S.follow&&i!==S.phase){S.follow=false;renderRight();}gotoPhase(i);});
+  $('prevPh').onclick=()=>{if(S.role==='s')S.follow=false;gotoPhase(Math.max(0,S.phase-1));};
+  $('nextPh').onclick=()=>{if(S.role==='s')S.follow=false;gotoPhase(Math.min(4,S.phase+1));};
+}
+function gotoPhase(i,silent){
+  S.phase=i; S.maxPhase=Math.max(S.maxPhase,i);
+  document.querySelectorAll('.phase-sec').forEach((s,k)=>s.classList.toggle('hidden',k!==i));
+  const p=PHASES[i];$('stIcon').textContent=p.icon;$('stTitle').textContent=`${i+1}. ${p.name}`;$('stSub').textContent=`${p.min} min · ${p.sub}`;
+  updatePhaseBoxes();
+  $('stage').scrollTop=0;
+  if(i!==1&&V.playing)vPause();
+  if(S.role==='t'){pushPresence();saveTState();}
+  if(i===4)refreshEvaluate();
+}
+function updatePhaseBoxes(){
+  const el=TOTAL-S.timer.rem;let acc=0;
+  document.querySelectorAll('.ph').forEach((b,i)=>{
+    const st=acc*60,en=(acc+PHASES[i].min)*60;acc+=PHASES[i].min;
+    b.classList.toggle('cur',i===S.phase);
+    b.classList.toggle('done',i<S.phase||(i!==S.phase&&i<S.maxPhase));
+    b.querySelector('.chk').textContent=(i<S.phase||(i!==S.phase&&i<S.maxPhase))?'✓':'';
+    const f=Math.max(0,Math.min(1,(el-st)/(en-st)));
+    b.querySelector('.bar').style.width=(f*100)+'%';
+  });
+}
+function saveTState(){ls.set('rl_tstate_'+S.lesson,{phase:S.phase,max:S.maxPhase,rem:S.timer.rem});}
+
+/* =========================================================
+   TIMER
+   ========================================================= */
+$('tPlay').onclick=()=>{
+  S.timer.run=!S.timer.run;S.timer.last=performance.now();
+  $('tPlay').textContent=S.timer.run?'❚❚':'▶';pushPresence();
+};
+$('tReset').onclick=()=>{S.timer.run=false;S.timer.rem=TOTAL;$('tPlay').textContent='▶';drawClock();updatePhaseBoxes();pushPresence();saveTState();};
+function drawClock(){
+  const r=Math.max(0,Math.ceil(S.timer.rem));const c=$('clock');
+  c.textContent=String(Math.floor(r/60)).padStart(2,'0')+':'+String(r%60).padStart(2,'0');
+  c.classList.toggle('warn',r<=300&&r>60);c.classList.toggle('end',r<=60);
+}
+let lastSave=0,lastBox=0;
+function tick(now){
+  if(S.timer.run){
+    const dt=(now-S.timer.last)/1000;S.timer.last=now;
+    S.timer.rem=Math.max(0,S.timer.rem-dt);
+    if(S.timer.rem<=0){S.timer.run=false;$('tPlay').textContent='▶';toast('⏰ Time is up — lesson complete!');pushPresence();}
+    drawClock();
+    if(S.role==='t'&&S.autoAdvance){
+      const el=TOTAL-S.timer.rem;let acc=0,want=0;
+      for(let i=0;i<5;i++){acc+=PHASES[i].min*60;if(el<acc){want=i;break;}want=4;}
+      if(want>S.phase&&want>S.maxPhase){gotoPhase(want);toast(`⏭ Time for ${PHASES[want].name}`);}
+    }
+    if(now-lastBox>1000){lastBox=now;updatePhaseBoxes();}
+    if(S.role==='t'&&now-lastSave>5000){lastSave=now;saveTState();}
+  }else S.timer.last=now;
+  vFrame(now);
+  requestAnimationFrame(tick);
+}
+
+/* =========================================================
+   QUESTIONS
+   ========================================================= */
+function qHTML(id,extraCls=''){
+  const q=Q[id];
+  const lvlCls=q.lvl?' lv-'+q.lvl:'';
+  return `<div class="q${lvlCls} ${extraCls}" id="q_${id}">
+    <div class="qh"><span class="qn">${q.lvl?LV[q.lvl].emoji+' '+q.n:q.n}</span><span class="skill">${q.skill}</span><span class="resp" id="resp_${id}" style="margin-left:auto"></span></div>
+    <div class="stem">${q.stem}</div>
+    <div class="opts">${q.opts.map((o,i)=>`<button class="opt" data-q="${id}" data-i="${i}"><span class="fill"></span><span class="L">${L[i]}</span><span class="tx">${o}</span><span class="cnt"></span></button>`).join('')}</div>
+    <div class="qfoot" id="qf_${id}"></div>
+    <div id="fb_${id}"></div>
+  </div>`;
+}
+function wireQuestions(root){
+  root.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const id=b.dataset.q,i=+b.dataset.i;
+    if(S.role==='t')return;
+    const key=id.startsWith('d')?'d':id;
+    if(S.mine[key]!=null)return;
+    S.pending[id]=i;updateQ(id);
+  });
+  root.querySelectorAll('.q').forEach(el=>updateQ(el.id.slice(2)));
+}
+function answersFor(id){
+  const counts=[0,0,0,0];let n=0;
+  for(const code in S.results){
+    const r=S.results[code];
+    if(id.startsWith('d')){const lv=id==='dg'?'g':id==='dy'?'y':'r';const g=grade(code);if(!g||g.dl!==lv||r.a.d==null)continue;counts[r.a.d]++;n++;}
+    else if(r.a[id]!=null){counts[r.a[id]]++;n++;}
+  }
+  return {counts,n};
+}
+function updateQ(id){
+  const box=$('q_'+id);if(!box)return;const q=Q[id];
+  const btns=box.querySelectorAll('.opt');const foot=$('qf_'+id),fb=$('fb_'+id);
+  if(S.role==='t'){
+    const {counts,n}=answersFor(id);const rev=!!S.revealed[id];
+    btns.forEach((b,i)=>{b.disabled=true;b.classList.toggle('right',rev&&i===q.ans);
+      b.querySelector('.fill').style.width=n?(counts[i]/n*100)+'%':'0';
+      b.querySelector('.cnt').textContent=n?`${counts[i]} · ${Math.round(counts[i]/n*100)}%`:'';});
+    const ok=n?Math.round(counts[q.ans]/n*100):0;
+    $('resp_'+id).textContent=n?`${n} response${n>1?'s':''}${rev?` · ${ok}% correct`:''}`:'Waiting for responses…';
+    if(!foot.dataset.w){foot.dataset.w=1;foot.innerHTML=`<button class="btn sm gold" data-rev="${id}">${S.revealed[id]?'🙈 Hide answer':'👁 Reveal answer'}</button>`;
+      foot.querySelector('button').onclick=()=>{S.revealed[id]=!S.revealed[id];foot.querySelector('button').textContent=S.revealed[id]?'🙈 Hide answer':'👁 Reveal answer';updateQ(id);};}
+    fb.innerHTML=rev?`<div class="fb info">✔ <b>${L[q.ans]}</b> — ${q.exp}</div>`:'';
+    return;
+  }
+  const key=id.startsWith('d')?'d':id;
+  const done=S.mine[key];
+  const pend=S.pending[id];
+  btns.forEach((b,i)=>{
+    b.disabled=done!=null;
+    b.classList.toggle('sel',done==null&&pend===i);
+    b.classList.toggle('right',done!=null&&i===q.ans);
+    b.classList.toggle('wrong',done!=null&&i===done&&done!==q.ans);
+  });
+  if(done!=null){
+    foot.innerHTML='';
+    fb.innerHTML=done===q.ans?`<div class="fb ok">🎉 Correct! ${q.exp}</div>`:`<div class="fb no">Not quite — the answer is <b>${L[q.ans]}</b>. ${q.exp}</div>`;
+    $('resp_'+id).textContent='Submitted ✓';
+  }else{
+    foot.innerHTML=`<button class="btn sm" ${pend==null?'disabled':''}>Submit answer</button>`;
+    foot.querySelector('button').onclick=()=>submitAnswer(id);
+    fb.innerHTML='';$('resp_'+id).textContent='';
+  }
+}
+function submitAnswer(id){
+  const i=S.pending[id];if(i==null)return;
+  if(id.startsWith('d')){S.mine.d=i;S.mine.dl=Q[id].lvl;}else S.mine[id]=i;
+  delete S.pending[id];
+  ls.set('rl_s_'+S.lesson+'_'+S.me,S.mine);
+  updateQ(id);pushPresence();studentDbWrite();renderRight();
+  if(CORE.every(k=>S.mine[k]!=null))refreshEvaluate();
+  toast(S.mine[id.startsWith('d')?'d':id]===Q[id].ans?'✅ Correct — sent to your teacher':'📨 Answer sent to your teacher');
+}
+function refreshTeacherCounts(){Object.keys(Q).forEach(updateQ);if(S.phase===4)refreshEvaluate();}
+
+/* =========================================================
+   PHASE CONTENT
+   ========================================================= */
+function buildPhaseContent(){
+  const T=S.role==='t';
+  const host=$('phaseHost');
+  host.innerHTML=`
+  <!-- ENGAGE -->
+  <div class="phase-sec" data-p="0">
+    <div class="card">
+      <h3>🔁 Reflection on last lesson: <i>Reaction Rate Laws</i> <span class="tag">Reflection</span></h3>
+      <p style="margin:0 0 10px">Tap each card to remember what we learned last lesson.</p>
+      <div class="flips">
+        <div class="flip"><div class="inner"><div class="f">What does a rate law tell us?</div><div class="b">How the reaction rate depends on the concentration of each reactant: Rate = k[A]<sup>m</sup>[B]<sup>n</sup></div></div></div>
+        <div class="flip"><div class="inner"><div class="f">What is k?</div><div class="b">The rate constant. It changes with temperature, not with concentration.</div></div></div>
+        <div class="flip"><div class="inner"><div class="f">How do we find the overall order?</div><div class="b">Add the individual orders: overall order = m + n</div></div></div>
+      </div>
+      <div class="prompt">🪞 Think: What do I remember well from last lesson? What is still unclear to me?</div>
+    </div>
+    ${qHTML('q1')}
+    <div class="card">
+      <h3>🧲 Hook: double the reactant, double the speed? <span class="tag uae">UAE link</span></h3>
+      <div class="grid2">
+        <div>${hookSVG()}</div>
+        <div>
+          <p style="margin-top:0">Engineers at a gas plant in <b>Al Dhafra, Abu Dhabi</b> want sulfur to form faster. One engineer says: <i>“Just double the amount of gas — the reaction will go twice as fast!”</i></p>
+          <div class="prompt">🤔 Do you agree? If we double a reactant’s concentration, will the rate always double?</div>
+          <div class="thumbs" id="hookVote"><button data-v="1">× 1 (no change)</button><button data-v="2">× 2</button><button data-v="4">× 4</button><button data-v="?">It depends…</button></div>
+          <div id="hookAns" class="fb info hidden">It depends on the <b>order</b> of the reaction! Today you will discover how to find it from experiments.</div>
+          <p class="resp" style="margin-top:10px">🔗 Prior knowledge: collision theory — more particles in the same volume means more collisions per second.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPLORE -->
+  <div class="phase-sec hidden" data-p="1">
+    <div class="card">
+      <h3>🎬 3D AR-style explainer video (3:00) <span class="tag gold">Watch &amp; discover</span></h3>
+      <div class="vwrap" id="vwrap">
+        <canvas id="vcan"></canvas>
+        <div class="vh-tl"><div class="sc" id="vScene">Scene 1 / 8</div><h4 id="vTitle">Rate laws from experiments</h4></div>
+        <div class="vh-tr"><span class="arbadge">◉ AR 3D · drag to rotate</span></div>
+        <div class="vh-panel" id="vPanel"></div>
+        <div class="vcap" id="vCap"></div>
+        <button class="vbig" id="vBig" title="Play">▶</button>
+        <div class="vctrl">
+          <button id="vPlay" title="Play / pause">▶</button>
+          <div class="vprog" id="vProg"><div class="pf" id="vPf"></div></div>
+          <span class="vtime" id="vTime">0:00 / 3:00</span>
+          <button id="vZo" title="Zoom out">－</button><button id="vZi" title="Zoom in">＋</button>
+          <button id="vCC" class="on" title="Captions">CC</button>
+          <button id="vMute" title="Narration on/off">🔊</button>
+          <button id="vFs" title="Full screen">⛶</button>
+        </div>
+      </div>
+      <p class="resp" style="margin:8px 0 0">While you watch: note what happens to the rate when one concentration changes and the other stays the same.</p>
+    </div>
+    <div class="card">
+      <h3>🧪 Virtual lab: discover the hidden rate law <span class="tag">Explore</span></h3>
+      <p style="margin-top:0">Reaction: <b>X + Y → products</b>. Choose concentrations, run a trial and record the initial rate. <b>Change one concentration at a time!</b></p>
+      <div class="lab">
+        <div>
+          <div class="sect-t" style="margin-top:0">[X] (mol/L)</div>
+          <div class="pick" id="pickX"><button class="on">0.10</button><button>0.20</button><button>0.30</button></div>
+          <div class="sect-t">[Y] (mol/L)</div>
+          <div class="pick y" id="pickY"><button class="on">0.10</button><button>0.20</button><button>0.30</button></div>
+          <div class="beaker"><canvas id="beaker"></canvas></div>
+          <div style="display:flex;gap:8px;margin-top:10px"><button class="btn green" id="runTrial" style="flex:1">▶ Run trial</button><button class="btn ghost sm" id="clrTrial">Clear</button></div>
+        </div>
+        <div>
+          <table class="data labtbl" id="labTbl"></table>
+          <div class="resp">Tip: click two rows to compare them.</div>
+          <div class="cmp" id="labCmp">Select two trials to compare their ratios.</div>
+        </div>
+      </div>
+    </div>
+    ${qHTML('q2')}
+  </div>
+
+  <!-- EXPLAIN -->
+  <div class="phase-sec hidden" data-p="2">
+    <div class="card">
+      <h3>🗣️ Share your findings <span class="tag">Students present</span></h3>
+      <div class="prompt">Groups: tell the class what happened to the rate in the virtual lab when you doubled [X]… and when you doubled [Y]. What rate law did you find for X + Y?</div>
+      ${T?`<button class="btn sm gold" id="labReveal">👁 Reveal the hidden lab law</button><div id="labLaw" class="fb info hidden">Hidden rate law: <b>Rate = k[X]<sup>2</sup>[Y]</b> → second order in X, first order in Y, third order overall.</div>`:''}
+    </div>
+    <div class="card">
+      <h3>📐 The method of initial rates <span class="tag gold">Teacher explains</span></h3>
+      <div class="eq">( c<sub>2</sub> / c<sub>1</sub> )<sup>order</sup> = rate<sub>2</sub> / rate<sub>1</sub></div>
+      <ol class="steps">
+        <li>Pick two trials where <b>only one</b> concentration changes.</li>
+        <li>Find the concentration ratio (e.g. ×2, ×3, ×1.5).</li>
+        <li>Find the rate ratio for the same two trials.</li>
+        <li>Solve for the order, then write Rate = k[A]<sup>m</sup>[B]<sup>n</sup>.</li>
+      </ol>
+      ${tbl(['Concentration ×2 → rate','×1','×2','×4','×8'],[['Order','0','1','2','3']])}
+    </div>
+    <div class="card">
+      <h3>⚠️ Fix the misconceptions <span class="tag">Tap: myth → fact</span></h3>
+      <div class="myth">
+        <div class="flip"><div class="inner"><div class="f">❌ “The orders are the coefficients in the balanced equation.”</div><div class="b">✅ Orders come only from experiments. 2NO + 2H<sub>2</sub> is first order in each!</div></div></div>
+        <div class="flip"><div class="inner"><div class="f">❌ “Zero order means the reactant is not needed.”</div><div class="b">✅ It is still used up; its concentration just does not affect the rate.</div></div></div>
+        <div class="flip"><div class="inner"><div class="f">❌ “k changes when concentration changes.”</div><div class="b">✅ k is constant at a given temperature; it changes with temperature.</div></div></div>
+      </div>
+    </div>
+    ${qHTML('q3')}
+  </div>
+
+  <!-- ELABORATE -->
+  <div class="phase-sec hidden" data-p="3">
+    <div class="card">
+      <h3>🇦🇪 Real-world chemistry in the UAE <span class="tag uae">UAE link</span></h3>
+      <div class="grid2">
+        <div>${uaeSVG()}</div>
+        <div>
+          <p style="margin-top:0">Natural gas from fields such as <b>Shah</b> and <b>Habshan</b> in Abu Dhabi contains poisonous hydrogen sulfide (H<sub>2</sub>S). ADNOC gas plants remove it and turn it into pure <b>sulfur</b>, which the UAE exports for fertilisers.</p>
+          <p>Chemical engineers need the rate law to know which gas to increase to speed up sulfur production most efficiently.</p>
+          <div class="eq" style="font-size:18px">2H<sub>2</sub>S + SO<sub>2</sub> → 3S + 2H<sub>2</sub>O</div>
+        </div>
+      </div>
+      <div class="sect-t">Lab trials (hypothetical data for practice)</div>
+      ${tbl(['Trial','[H<sub>2</sub>S] (M)','[SO<sub>2</sub>] (M)','Initial rate (M/s)'],[[1,'0.10','0.10',x10('2.0','−4')],[2,'0.20','0.10',x10('8.0','−4')],[3,'0.20','0.20',x10('1.6','−3')]])}
+      <div class="prompt">💬 Pair task: which reactant should the engineers increase to make sulfur form faster? Why?</div>
+    </div>
+    ${qHTML('q4')}
+  </div>
+
+  <!-- EVALUATE -->
+  <div class="phase-sec hidden" data-p="4">
+    ${qHTML('q5')}
+    <div class="card" id="levelCard"></div>
+    <div class="card">
+      <h3>🧠 Lesson closure: check for understanding</h3>
+      <ol class="steps">
+        <li>A rate law has the form Rate = k[A]<sup>m</sup>[B]<sup>n</sup>; m and n come from <b>experiments</b>.</li>
+        <li>Compare two trials where only one concentration changes: (c<sub>2</sub>/c<sub>1</sub>)<sup>m</sup> = rate<sub>2</sub>/rate<sub>1</sub>.</li>
+        <li>×2 → ×1 (zero order), ×2 (first order), ×4 (second order).</li>
+      </ol>
+      <div class="prompt">How confident are you about finding a rate law from data?</div>
+      <div class="thumbs" id="conf"><button>👍 Confident</button><button>✋ Almost</button><button>👎 Need help</button></div>
+    </div>
+    ${qHTML('x1')}
+    ${T?`<div class="dl-wrap"><div style="font-size:32px">📊</div><div style="flex:1"><h3 style="font-size:18px">Download class data</h3><div class="resp">A CSV file (opens in Excel) with each student code, every answer, correct/incorrect, level, score and weak skills, plus a class summary.</div></div><button class="btn gold" data-dl>⬇ Download data (CSV)</button><button class="btn ghost sm" data-copy>Copy</button></div>`:''}
+  </div>`;
+  host.querySelectorAll('.flip').forEach(f=>f.onclick=()=>f.classList.toggle('on'));
+  host.querySelectorAll('#hookVote button').forEach(b=>b.onclick=()=>{host.querySelectorAll('#hookVote button').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('hookAns').classList.remove('hidden');});
+  host.querySelectorAll('#conf button').forEach(b=>b.onclick=()=>{host.querySelectorAll('#conf button').forEach(x=>x.classList.remove('on'));b.classList.add('on');});
+  if(T){$('labReveal').onclick=()=>$('labLaw').classList.toggle('hidden');}
+  host.querySelectorAll('[data-dl]').forEach(b=>b.onclick=downloadCSV);
+  host.querySelectorAll('[data-copy]').forEach(b=>b.onclick=copyCSV);
+  wireQuestions(host);
+  initVideo(); initLab();
+}
+
+function refreshEvaluate(){
+  const c=$('levelCard');if(!c)return;
+  if(S.role==='t'){
+    const groups={g:[],y:[],r:[]};let pending=[];
+    for(let i=1;i<=S.size;i++){const code='CH'+i;const g=grade(code);if(!g)continue;if(g.lvl)groups[g.lvl].push(code);else pending.push(code);}
+    c.innerHTML=`<h3>🏅 Student levels &amp; differentiated challenges <span class="tag">Based on Q1–Q5</span></h3>
+      <div class="groups">${['g','y','r'].map(k=>`<div class="grp ${k}"><h4>${LV[k].emoji} ${LV[k].name} (${groups[k].length})</h4><div class="codes">${groups[k].map(x=>`<span>${x}</span>`).join('')||'<span style="opacity:.6">—</span>'}</div></div>`).join('')}</div>
+      ${pending.length?`<p class="resp">Still answering Q1–Q5: ${pending.join(', ')}</p>`:''}
+      <div style="margin-top:12px">${qHTML('dg')}${qHTML('dy')}${qHTML('dr')}</div>`;
+    wireQuestions(c);
+  }else{
+    const done=CORE.filter(k=>S.mine[k]!=null);
+    if(done.length<5){
+      const miss=CORE.filter(k=>S.mine[k]==null).map(k=>Q[k].n).join(', ');
+      c.innerHTML=`<h3>🔒 Your level challenge</h3><p>Answer all five questions (Q1–Q5) to unlock the challenge for your level. Still to answer: <b>${miss}</b>.</p>`;
+      return;
+    }
+    const score=CORE.filter(k=>S.mine[k]===Q[k].ans).length;
+    const lv=S.mine.dl||levelOf(score);
+    if(!S.mine.dl){S.mine.dl=lv;ls.set('rl_s_'+S.lesson+'_'+S.me,S.mine);pushPresence();}
+    if(c.dataset.lv===lv)return;
+    c.dataset.lv=lv;
+    c.innerHTML=`<div class="lvlbanner ${lv}">${LV[lv].emoji} You scored ${score}/5 — your level: <b>${LV[lv].name}</b></div>${qHTML(DIFF[lv])}`;
+    wireQuestions(c);
+  }
+}
+
+/* SVG illustrations */
+function hookSVG(){
+  const dots=(cx,n,seed)=>{let s='',r=seed;for(let i=0;i<n;i++){r=(r*9301+49297)%233280;const x=cx-36+(r/233280)*72;r=(r*9301+49297)%233280;const y=150+(r/233280)*60;s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${i%2?'#c9a227':'#3a82bf'}"/>`;}return s;};
+  return `<svg class="scene-svg" viewBox="0 0 360 260"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f1fb"/><stop offset="1" stop-color="#f5ede1"/></linearGradient></defs>
+  <rect width="360" height="260" fill="url(#sky)" rx="12"/>
+  <path d="M0 230 Q90 205 180 225 T360 220 V260 H0Z" fill="#e3cfa9"/>
+  ${[[80,'1 ×'],[270,'2 ×']].map(([cx,l],k)=>`<g><path d="M${cx-18} 100 V128 L${cx-48} 210 Q${cx-50} 222 ${cx-36} 222 H${cx+36} Q${cx+50} 222 ${cx+48} 210 L${cx+18} 128 V100Z" fill="#fff" stroke="#8a6847" stroke-width="3"/><path d="M${cx-38} 160 L${cx-48} 210 Q${cx-50} 222 ${cx-36} 222 H${cx+36} Q${cx+50} 222 ${cx+48} 210 L${cx+38} 160Z" fill="#b9dcf3" opacity=".8"/>${dots(cx,k?16:8,k?7:3)}<rect x="${cx-22}" y="92" width="44" height="10" rx="3" fill="#8a6847"/><text x="${cx}" y="80" text-anchor="middle" font-family="Fredoka" font-size="18" fill="#4f3a27">${l} [gas]</text></g>`).join('')}
+  <text x="175" y="150" text-anchor="middle" font-family="Fredoka" font-size="44" fill="#c9a227">?</text>
+  <text x="175" y="185" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="13" fill="#4f3a27">rate × ?</text>
+  <g transform="translate(300 40)"><circle r="16" fill="#f3e2a6"/><g stroke="#c9a227" stroke-width="3">${[0,45,90,135,180,225,270,315].map(a=>`<line x1="0" y1="-22" x2="0" y2="-28" transform="rotate(${a})"/>`).join('')}</g></g>
+  </svg>`;
+}
+function uaeSVG(){
+  return `<svg class="scene-svg" viewBox="0 0 360 230"><rect width="360" height="230" rx="12" fill="#e3f1fb"/>
+  <path d="M0 180 Q80 160 160 175 T360 168 V230 H0Z" fill="#e3cfa9"/><path d="M0 200 Q100 185 200 198 T360 192 V230 H0Z" fill="#d8bf9c"/>
+  <g fill="#8a6847"><rect x="40" y="90" width="18" height="90"/><rect x="66" y="110" width="26" height="70" rx="4"/><rect x="100" y="70" width="12" height="110"/><rect x="120" y="120" width="60" height="60" rx="6"/></g>
+  <circle cx="150" cy="120" r="26" fill="#b9dcf3" stroke="#8a6847" stroke-width="3"/>
+  <path d="M106 70 q-6 -14 4 -22 q4 10 10 4 q2 12 -14 18z" fill="#e2ad12"/>
+  <g transform="translate(250 120)"><path d="M-60 60 L0 -10 L60 60Z" fill="#f2d04a" stroke="#c9a227" stroke-width="3"/><path d="M-30 60 L5 20 L40 60Z" fill="#e2ad12" opacity=".7"/><text x="0" y="-18" text-anchor="middle" font-family="Fredoka" font-size="14" fill="#4f3a27">Sulfur (S)</text></g>
+  <g transform="translate(16 16)"><rect width="36" height="24" fill="#fff" stroke="#ccc"/><rect width="10" height="24" fill="#c4473b"/><rect x="10" width="26" height="8" fill="#3f9460"/><rect x="10" y="16" width="26" height="8" fill="#222"/></g>
+  <text x="62" y="33" font-family="Fredoka" font-size="14" fill="#4f3a27">Gas processing · Al Dhafra, Abu Dhabi</text>
+  </svg>`;
+}
+
+/* =========================================================
+   VIRTUAL LAB  (hidden law: Rate = 2.0 [X]^2 [Y])
+   ========================================================= */
+const LAB={x:0.10,y:0.10,rows:[],sel:[],k:2.0,anim:0};
+const SUPS={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function sci(v){const e=Math.floor(Math.log10(v));const m=v/Math.pow(10,e);return m.toFixed(1)+' × 10'+String(e).split('').map(c=>SUPS[c]).join('');}
+function initLab(){
+  const setPick=(id,key)=>$(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{$(id).querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');LAB[key]=parseFloat(b.textContent);});
+  setPick('pickX','x');setPick('pickY','y');
+  $('runTrial').onclick=()=>{
+    const btn=$('runTrial');btn.disabled=true;btn.textContent='Measuring…';LAB.anim=performance.now();
+    setTimeout(()=>{const rate=LAB.k*LAB.x*LAB.x*LAB.y;LAB.rows.push({x:LAB.x,y:LAB.y,rate});btn.disabled=false;btn.textContent='▶ Run trial';renderLab();},900);
+  };
+  $('clrTrial').onclick=()=>{LAB.rows=[];LAB.sel=[];renderLab();};
+  renderLab();
+}
+function renderLab(){
+  const t=$('labTbl');
+  t.innerHTML=`<tr><th>Trial</th><th>[X] (M)</th><th>[Y] (M)</th><th>Initial rate (M/s)</th></tr>`+
+   (LAB.rows.length?LAB.rows.map((r,i)=>`<tr data-i="${i}"><td class="${LAB.sel.includes(i)?'sel':''}">${i+1}</td><td class="${LAB.sel.includes(i)?'sel':''}">${r.x.toFixed(2)}</td><td class="${LAB.sel.includes(i)?'sel':''}">${r.y.toFixed(2)}</td><td class="${LAB.sel.includes(i)?'sel':''}">${sci(r.rate)}</td></tr>`).join(''):`<tr><td colspan="4" style="color:#9c8b78">No trials yet — run your first trial.</td></tr>`);
+  t.querySelectorAll('tr[data-i]').forEach(tr=>tr.onclick=()=>{const i=+tr.dataset.i;if(LAB.sel.includes(i))LAB.sel=LAB.sel.filter(x=>x!==i);else{LAB.sel.push(i);if(LAB.sel.length>2)LAB.sel.shift();}renderLab();});
+  const c=$('labCmp');
+  if(LAB.sel.length===2){
+    const [a,b]=LAB.sel.map(i=>LAB.rows[i]);const f=v=>(Math.round(v*100)/100).toString();
+    const sameX=a.x===b.x,sameY=a.y===b.y;
+    c.innerHTML=`Trial ${LAB.sel[0]+1} → ${LAB.sel[1]+1}: [X] × <b>${f(b.x/a.x)}</b>, [Y] × <b>${f(b.y/a.y)}</b>, rate × <b>${f(b.rate/a.rate)}</b>`+
+      (sameX&&sameY?' · same conditions':(!sameX&&!sameY?' · ⚠️ both changed — choose a fair pair!':` · Only [${sameX?'Y':'X'}] changed → solve (${f(sameX?b.y/a.y:b.x/a.x)})<sup>order</sup> = ${f(b.rate/a.rate)}`));
+  }else c.textContent='Select two trials to compare their ratios.';
+}
+function drawBeaker(now){
+  const cv=$('beaker');if(!cv||cv.offsetParent===null)return;
+  const w=cv.clientWidth,h=cv.clientHeight,dpr=window.devicePixelRatio||1;
+  if(cv.width!==w*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+  const nX=Math.round(LAB.x*40),nY=Math.round(LAB.y*40);const t=now/1000;
+  const busy=now-LAB.anim<900;
+  for(let i=0;i<nX+nY;i++){
+    const isX=i<nX;const sp=busy?2.2:0.8;
+    const px=(Math.sin(i*12.9898+t*sp*(0.6+(i%5)*.15))*0.5+0.5)*(w-16)+8;
+    const py=(Math.cos(i*78.233+t*sp*(0.5+(i%7)*.12))*0.5+0.5)*(h-16)+8;
+    g.beginPath();g.arc(px,py,isX?5:4,0,6.283);g.fillStyle=isX?'#3a82bf':'#c9a227';g.fill();
+  }
+  g.fillStyle='rgba(79,58,39,.75)';g.font='700 11px Nunito';g.fillText('● X  ',8,h-8);g.fillStyle='#a38212';g.fillText('● Y',40,h-8);
+  if(busy){g.fillStyle='rgba(63,148,96,.85)';g.font='800 13px Nunito';g.fillText('measuring initial rate…',w-160,16);}
+}
+
+/* =========================================================
+   3D AR-STYLE VIDEO (canvas 3D engine + narration + captions)
+   ========================================================= */
+const MOL={
+  NO:{c:['#3d7fd6','#e0533f'],r:[.085,.08],name:'NO'},
+  H2:{c:['#f4e6a0','#f4e6a0'],r:[.06,.06],name:'H₂'},
+  A:{c:['#3d7fd6','#3d7fd6'],r:[.08,.08],name:'A'},
+  B:{c:['#d4a62a','#d4a62a'],r:[.075,.075],name:'B'}
+};
+const SCENES=[
+ {title:'Rate laws from experiments',ch:[{a:'NO',b:'H2',na:10,nb:10}],
+  panel:()=>`<div class="bigeq">2NO + 2H₂ → N₂ + 2H₂O</div><div style="text-align:center">Rate = k[NO]<sup>m</sup>[H₂]<sup>n</sup></div><div class="bigeq">m = ?  n = ?</div>`,
+  lines:[
+   ['Welcome, chemists! In this lesson you will discover how scientists find a rate law from real experimental data.'],
+   ['Inside this 3D reaction chamber, nitrogen monoxide molecules, in blue and red, collide with hydrogen molecules, in gold.'],
+   ['The balanced equation is 2NO + 2H₂ → N₂ + 2H₂O.','The balanced equation is: two N O, plus two H two, gives N two, plus two H two O.'],
+   ['But can the balanced equation tell us how fast the reaction goes? Let’s find out.','But can the balanced equation tell us how fast the reaction goes? Let us find out.']]},
+ {title:'The general rate law',ch:[{a:'A',b:'B',na:9,nb:9}],
+  panel:()=>`<div class="bigeq">Rate = k[A]<sup>m</sup>[B]<sup>n</sup></div><div class="row"><span>k</span><span>rate constant</span></div><div class="row"><span>m, n</span><span>reaction orders</span></div><div class="row"><span>m + n</span><span>overall order</span></div><div style="margin-top:6px;color:#f3e2a6">⚠ Orders come from experiments, not coefficients!</div>`,
+  lines:[
+   ['Every rate law has the form: Rate = k[A]ᵐ[B]ⁿ.','Every rate law has the form: rate equals k, times the concentration of A to the power m, times the concentration of B to the power n.'],
+   ['k is the rate constant, and the exponents m and n are the reaction orders.'],
+   ['Here is the key idea: the orders can only be found by experiment.'],
+   ['They are NOT taken from the coefficients of the balanced equation.','They are not taken from the coefficients of the balanced equation.']]},
+ {title:'The method of initial rates',ch:[{a:'A',b:'B',na:6,nb:6,label:'Trial 1',info:'[A] ×1 · [B] ×1'},{a:'A',b:'B',na:12,nb:6,label:'Trial 2',info:'[A] ×2 · [B] ×1'}],
+  panel:()=>`<div class="row"><span>Trial 1</span><span>[A] × 1 · [B] × 1</span></div><div class="row"><span>Trial 2</span><span>[A] × 2 · [B] × 1</span></div><div style="margin-top:6px">Change <b style="color:#f3e2a6">ONE</b> concentration at a time.<br>Measure the rate at the <b style="color:#f3e2a6">start</b>.</div>`,
+  lines:[
+   ['To find the orders, we use the method of initial rates.'],
+   ['We run several trials. Between two trials, we change only ONE concentration and keep the other constant.','We run several trials. Between two trials, we change only one concentration, and keep the other constant.'],
+   ['Then we measure the rate at the very start of the reaction, before the concentrations change.'],
+   ['Look: the right chamber has twice as many blue molecules, so there are more collisions every second.']]},
+ {title:'Reading the order from the data',ch:[{a:'A',b:'B',na:6,nb:6,label:'[A] × 1',info:'rate × 1'},{a:'A',b:'B',na:12,nb:6,label:'[A] × 2',info:'rate × 2ᵐ'}],
+  panel:()=>`<div class="bigeq">(c₂/c₁)<sup>order</sup> = rate₂/rate₁</div><table><tr><th>[A] ×2 → rate</th><th>order</th></tr><tr><td>× 1</td><td>0</td></tr><tr><td>× 2</td><td>1</td></tr><tr><td>× 4</td><td>2</td></tr><tr><td>× 8</td><td>3</td></tr></table>`,
+  lines:[
+   ['Now compare the rates using this rule: (concentration ratio)^order = rate ratio.','Now compare the rates, using this rule: the concentration ratio, raised to the power of the order, equals the rate ratio.'],
+   ['If doubling a concentration does not change the rate, the order is zero.'],
+   ['If the rate doubles, the order is one.'],
+   ['If the rate becomes four times faster, the order is two — and eight times faster means order three.','If the rate becomes four times faster, the order is two. And eight times faster means order three.']]},
+ {title:'Example: the order in NO',ch:[{a:'NO',b:'H2',na:4,nb:6,label:'Trial 1',info:'[NO] 5.0×10⁻³ · rate 3.0×10⁻⁵'},{a:'NO',b:'H2',na:12,nb:6,label:'Trial 2',info:'[NO] 1.5×10⁻² · rate 9.0×10⁻⁵'}],
+  panel:()=>`<table><tr><th>Trial</th><th>[NO]</th><th>[H₂]</th><th>Rate</th></tr><tr class="hl"><td>1</td><td>5.0×10⁻³</td><td>2.5×10⁻³</td><td>3.0×10⁻⁵</td></tr><tr class="hl"><td>2</td><td>1.5×10⁻²</td><td>2.5×10⁻³</td><td>9.0×10⁻⁵</td></tr><tr><td>3</td><td>1.5×10⁻²</td><td>1.0×10⁻²</td><td>3.6×10⁻⁴</td></tr></table><div class="bigeq">3<sup>m</sup> = 3 → m = 1</div>`,
+  lines:[
+   ['Let’s solve a real problem. Compare trials 1 and 2, where [H₂] stays the same.','Let us solve a real problem. Compare trials one and two, where the hydrogen concentration stays the same.'],
+   ['[NO] rises from 5.0 × 10⁻³ to 1.5 × 10⁻² M — three times larger.','The N O concentration rises from five times ten to the minus three, to one point five times ten to the minus two molar. That is three times larger.'],
+   ['The rate also triples, from 3.0 × 10⁻⁵ to 9.0 × 10⁻⁵ M/s.','The rate also triples, from three, to nine, times ten to the minus five.'],
+   ['3ᵐ = 3, so m = 1. The reaction is first order in NO.','Three to the power m equals three, so m equals one. The reaction is first order in N O.']]},
+ {title:'Example: the order in H₂',ch:[{a:'NO',b:'H2',na:8,nb:3,label:'Trial 2',info:'[H₂] 2.5×10⁻³ · rate 9.0×10⁻⁵'},{a:'NO',b:'H2',na:8,nb:12,label:'Trial 3',info:'[H₂] 1.0×10⁻² · rate 3.6×10⁻⁴'}],
+  panel:()=>`<table><tr><th>Trial</th><th>[NO]</th><th>[H₂]</th><th>Rate</th></tr><tr><td>1</td><td>5.0×10⁻³</td><td>2.5×10⁻³</td><td>3.0×10⁻⁵</td></tr><tr class="hl"><td>2</td><td>1.5×10⁻²</td><td>2.5×10⁻³</td><td>9.0×10⁻⁵</td></tr><tr class="hl"><td>3</td><td>1.5×10⁻²</td><td>1.0×10⁻²</td><td>3.6×10⁻⁴</td></tr></table><div class="bigeq">4<sup>n</sup> = 4 → n = 1</div>`,
+  lines:[
+   ['Next, compare trials 2 and 3, where [NO] stays the same.','Next, compare trials two and three, where the N O concentration stays the same.'],
+   ['[H₂] rises from 2.5 × 10⁻³ to 1.0 × 10⁻² M — four times larger.','The hydrogen concentration rises from two point five times ten to the minus three, to one times ten to the minus two molar. That is four times larger.'],
+   ['The rate rises from 9.0 × 10⁻⁵ to 3.6 × 10⁻⁴ M/s — also four times larger.','The rate rises from nine times ten to the minus five, to three point six times ten to the minus four. Also four times larger.'],
+   ['4ⁿ = 4, so n = 1. The reaction is first order in H₂.','Four to the power n equals four, so n equals one. The reaction is first order in hydrogen.']]},
+ {title:'The rate law',ch:[{a:'NO',b:'H2',na:10,nb:10}],
+  panel:()=>`<div class="bigeq">Rate = k[NO][H₂]</div><div class="row"><span>Order in NO</span><span>1</span></div><div class="row"><span>Order in H₂</span><span>1</span></div><div class="row"><span>Overall order</span><span>1 + 1 = 2</span></div><div style="margin-top:6px;color:#f3e2a6">Coefficients: 2 and 2 · Orders: 1 and 1</div>`,
+  lines:[
+   ['So the rate law is: Rate = k[NO][H₂].','So the rate law is: rate equals k, times N O, times H two.'],
+   ['It is first order in each reactant, and second order overall, because 1 + 1 = 2.','It is first order in each reactant, and second order overall, because one plus one equals two.'],
+   ['Notice: the coefficients were 2 and 2, but the orders are 1 and 1. Experiments, not equations, decide the rate law!','Notice: the coefficients were two and two, but the orders are one and one. Experiments, not equations, decide the rate law!']]},
+ {title:'Your mission',ch:[{a:'A',b:'B',na:8,nb:8,label:'Your lab'}],
+  panel:()=>`<div class="bigeq">🧪 Your mission</div><div class="row"><span>1</span><span>Change ONE concentration</span></div><div class="row"><span>2</span><span>Run the trial, record the rate</span></div><div class="row"><span>3</span><span>Compare ratios → find orders</span></div><div class="row"><span>4</span><span>Write the hidden rate law</span></div>`,
+  lines:[
+   ['Now it’s your turn to be the scientist.','Now it is your turn to be the scientist.'],
+   ['In the virtual lab below, change one concentration at a time, run each trial, and record the initial rate.'],
+   ['Compare your trials, find the orders, and discover the hidden rate law yourself. Good luck, chemists!']]}
+];
+// timeline: proportional to narration length, scaled to exactly 180 s
+(function buildTimeline(){
+  const CPS=13.2;let raw=0;
+  SCENES.forEach(sc=>{sc.lines=sc.lines.map(l=>({c:l[0],s:l[1]||l[0]}));sc.lines.forEach(l=>{l.d=l.s.length/CPS+0.9;raw+=l.d;});raw+=1.2;});
+  const k=180/raw;let t=0;
+  SCENES.forEach(sc=>{sc.start=t;sc.lines.forEach(l=>{l.start=t+0.6*k;l.d*=k;t+=l.d;});t+=1.2*k;sc.end=t;});
+  SCENES[SCENES.length-1].end=180;
+})();
+const V={yawBase:0.35,ang:0,t:0,dur:180,playing:false,yaw:0.5,pitch:0.32,dist:4.6,distT:4.6,zoom:1,cc:true,mute:false,sceneI:-1,lineKey:'',chambers:[],sparks:[],last:0,drag:null,started:false,voice:null};
+function initVideo(){
+  const wrap=$('vwrap'),cv=$('vcan');
+  $('vBig').onclick=()=>vPlay(); $('vPlay').onclick=()=>V.playing?vPause():vPlay();
+  $('vCC').onclick=()=>{V.cc=!V.cc;$('vCC').classList.toggle('on',V.cc);$('vCap').style.display=V.cc?'':'none';};
+  $('vMute').onclick=()=>{V.mute=!V.mute;$('vMute').textContent=V.mute?'🔇':'🔊';if(V.mute)speechCancel();else{V.lineKey='';}};
+  $('vZi').onclick=()=>V.zoom=Math.min(2.2,V.zoom*1.15);$('vZo').onclick=()=>V.zoom=Math.max(.55,V.zoom/1.15);
+  $('vFs').onclick=toggleFS;
+  const prog=$('vProg');
+  prog.innerHTML='<div class="pf" id="vPf"></div>'+SCENES.slice(1).map(s=>`<div class="tick" style="left:${s.start/180*100}%"></div>`).join('');
+  prog.onclick=e=>{const r=prog.getBoundingClientRect();vSeek((e.clientX-r.left)/r.width*V.dur);};
+  cv.addEventListener('pointerdown',e=>{V.drag={x:e.clientX,y:e.clientY,yaw:V.yaw,pitch:V.pitch};cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!V.drag)return;V.yaw=V.drag.yaw+(e.clientX-V.drag.x)*0.008;V.pitch=Math.max(-0.2,Math.min(1.2,V.drag.pitch+(e.clientY-V.drag.y)*0.006));});
+  cv.addEventListener('pointerup',()=>{if(V.drag){V.yawBase=V.yaw;V.ang=0;}V.drag=null;});
+  cv.addEventListener('wheel',e=>{e.preventDefault();V.zoom=Math.max(.55,Math.min(2.2,V.zoom*(e.deltaY<0?1.08:1/1.08)));},{passive:false});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&wrap.classList.contains('pfs'))toggleFS();});
+  document.addEventListener('fullscreenchange',()=>{$('vFs').textContent=document.fullscreenElement?'🗗':'⛶';});
+  try{const pick=()=>{const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));V.voice=vs.find(v=>/Google US English|Samantha|Aria|Jenny|Daniel|Google UK English Female/i.test(v.name))||vs.find(v=>/en-US/i.test(v.lang))||vs[0]||null;};pick();speechSynthesis.onvoiceschanged=pick;}catch(e){}
+  setScene(0);
+}
+function toggleFS(){
+  const w=$('vwrap');
+  if(document.fullscreenElement){document.exitFullscreen().catch(()=>{});return;}
+  if(w.classList.contains('pfs')){w.classList.remove('pfs');$('vFs').textContent='⛶';return;}
+  const req=w.requestFullscreen||w.webkitRequestFullscreen;
+  const fallback=()=>{w.classList.add('pfs');$('vFs').textContent='🗗';};
+  if(req){try{const p=req.call(w);if(p&&p.catch)p.catch(fallback);}catch(e){fallback();}}else fallback();
+}
+function vPlay(){if(V.t>=V.dur)vSeek(0);V.playing=true;V.started=true;V.last=performance.now();$('vBig').classList.add('hidden');$('vPlay').textContent='❚❚';V.lineKey='';}
+function vPause(){V.playing=false;$('vPlay').textContent='▶';$('vBig').classList.remove('hidden');speechCancel();}
+function vSeek(t){V.t=Math.max(0,Math.min(V.dur,t));V.lineKey='';speechCancel();}
+function speechCancel(){try{speechSynthesis.cancel();}catch(e){}}
+function speak(text){
+  if(V.mute)return;
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=1.0;u.pitch=1.0;if(V.voice)u.voice=V.voice;speechSynthesis.speak(u);}catch(e){}
+}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function makeMol(type,box){
+  const sp=0.8;const th=rnd(0,6.283),ph=rnd(-1,1);
+  return {type,p:[rnd(-box,box),rnd(-box,box),rnd(-box,box)],v:[Math.cos(th)*sp,ph*sp*.7,Math.sin(th)*sp],u:[rnd(-1,1),rnd(-1,1),rnd(-1,1)],w:rnd(1,3),cool:0};
+}
+function setScene(i){
+  V.sceneI=i;const sc=SCENES[i];const two=sc.ch.length>1;
+  V.distT=two?7.4:4.6;
+  V.chambers=sc.ch.map((c,k)=>{const box=0.88;const ms=[];for(let j=0;j<c.na;j++)ms.push(makeMol(c.a,box));for(let j=0;j<c.nb;j++)ms.push(makeMol(c.b,box));
+    return {cx:two?(k?1.45:-1.45):0,box,ms,label:c.label||'',info:c.info||'',hits:[]};});
+  V.sparks=[];
+  $('vScene').textContent=`Scene ${i+1} / ${SCENES.length}`;$('vTitle').textContent=sc.title;
+  const pn=$('vPanel');pn.classList.add('fade');setTimeout(()=>{pn.innerHTML=sc.panel();pn.classList.remove('fade');},250);
+}
+function vFrame(now){
+  const cv=$('vcan');if(!cv)return;
+  const wrap=$('vwrap');const visible=wrap.offsetParent!==null||wrap.classList.contains('pfs')||document.fullscreenElement===wrap;
+  drawBeaker(now);
+  if(!visible){V.last=now;return;}
+  let dt=Math.min(0.05,(now-(V.last||now))/1000);V.last=now;
+  if(V.playing){V.t+=dt;if(V.t>=V.dur){V.t=V.dur;vPause();}}
+  // scene / caption sync
+  let si=SCENES.findIndex(s=>V.t>=s.start&&V.t<s.end);if(si<0)si=SCENES.length-1;
+  if(si!==V.sceneI)setScene(si);
+  const sc=SCENES[si];let li=-1;sc.lines.forEach((l,k)=>{if(V.t>=l.start-0.6)li=k;});
+  const line=li>=0?sc.lines[li]:null;
+  $('vCap').textContent=(V.started&&line)?line.c:'';
+  const key=si+':'+li;
+  if(V.playing&&line&&key!==V.lineKey){V.lineKey=key;speak(line.s);}
+  $('vPf').style.width=(V.t/V.dur*100)+'%';
+  const fm=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+  $('vTime').textContent=fm(V.t)+' / 3:00';
+  // physics
+  if(!V.drag){V.ang=(V.ang||0)+dt*0.22;V.yaw+=(V.yawBase+0.5*Math.sin(V.ang)-V.yaw)*Math.min(1,dt*2);}
+  V.dist+=(V.distT/V.zoom-V.dist)*Math.min(1,dt*3);
+  for(const ch of V.chambers){
+    for(const m of ch.ms){for(let a=0;a<3;a++){m.p[a]+=m.v[a]*dt;if(m.p[a]>ch.box){m.p[a]=ch.box;m.v[a]*=-1;}if(m.p[a]<-ch.box){m.p[a]=-ch.box;m.v[a]*=-1;}}
+      const c=Math.cos(m.w*dt),s=Math.sin(m.w*dt);const [ux,uy,uz]=m.u;m.u=[ux*c-uz*s,uy,ux*s+uz*c];m.cool=Math.max(0,m.cool-dt);}
+    for(let i=0;i<ch.ms.length;i++)for(let j=i+1;j<ch.ms.length;j++){
+      const a=ch.ms[i],b=ch.ms[j];if(a.type===b.type)continue;
+      const dx=a.p[0]-b.p[0],dy=a.p[1]-b.p[1],dz=a.p[2]-b.p[2];const d2=dx*dx+dy*dy+dz*dz;
+      if(d2<0.06&&a.cool<=0&&b.cool<=0){
+        const t=a.v;a.v=b.v;b.v=t;a.cool=b.cool=0.3;
+        ch.hits.push(now);V.sparks.push({cx:ch.cx,p:[(a.p[0]+b.p[0])/2,(a.p[1]+b.p[1])/2,(a.p[2]+b.p[2])/2],t:0});
+      }}
+    ch.hits=ch.hits.filter(h=>now-h<4000);
+  }
+  V.sparks.forEach(s=>s.t+=dt);V.sparks=V.sparks.filter(s=>s.t<0.7);
+  render3D(cv);
+}
+function render3D(cv){
+  const w=cv.clientWidth,h=cv.clientHeight,dpr=Math.min(2,window.devicePixelRatio||1);
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+  if(V.vs!==w){V.vs=w;$('vwrap').style.setProperty('--vs',(w/100)+'px');}
+  const f=Math.min(w,h*1.6)*0.62;const cy=Math.cos(V.yaw),sy=Math.sin(V.yaw),cp=Math.cos(V.pitch),sp=Math.sin(V.pitch);
+  const P=(x,y,z)=>{const x1=x*cy-z*sy,z1=x*sy+z*cy;const y2=y*cp-z1*sp,z2=y*sp+z1*cp+V.dist;return [w*(w>700?0.37:0.5)+x1*f/z2,h*0.50-y2*f/z2,z2];};
+  // holographic floor grid
+  g.lineWidth=1;
+  for(let i=-6;i<=6;i++){const a=P(i*0.5,-1.15,-3),b=P(i*0.5,-1.15,3),c=P(-3,-1.15,i*0.5),d=P(3,-1.15,i*0.5);
+    g.strokeStyle=`rgba(95,179,232,${0.22-Math.abs(i)*0.025})`;g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.moveTo(c[0],c[1]);g.lineTo(d[0],d[1]);g.stroke();}
+  const items=[];
+  for(const ch of V.chambers){
+    const B=ch.box+0.12,cx=ch.cx;
+    const corners=[];for(const x of[-B,B])for(const y of[-B,B])for(const z of[-B,B])corners.push(P(cx+x,y,z));
+    const E=[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]];
+    g.strokeStyle='rgba(243,226,166,.55)';g.lineWidth=1.6;g.beginPath();E.forEach(([a,b])=>{g.moveTo(corners[a][0],corners[a][1]);g.lineTo(corners[b][0],corners[b][1]);});g.stroke();
+    // floor shadow ring
+    const sh=P(cx,-1.15,0);g.fillStyle='rgba(95,179,232,.10)';g.beginPath();g.ellipse(sh[0],sh[1],f*0.9/sh[2]*1.2,f*0.9/sh[2]*0.35,0,0,6.283);g.fill();
+    for(const m of ch.ms){const M=MOL[m.type];const bh=M.r[0]*0.95;
+      for(let k=0;k<2;k++){const sg=k?-1:1;const x=cx+m.p[0]+m.u[0]*bh*sg*0.6,y=m.p[1]+m.u[1]*bh*sg*0.6,z=m.p[2]+m.u[2]*bh*sg*0.6;const pp=P(x,y,z);items.push({x:pp[0],y:pp[1],z:pp[2],r:M.r[k]*f/pp[2],c:M.c[k]});}}
+    // labels
+    if(ch.label){const top=P(cx,B+0.1,0);
+      const f1=Math.round(Math.max(11,Math.min(22,h*0.032))),f2=Math.round(f1*0.78);
+      const line2=ch.info||'collisions: watch the green flashes';
+      g.textAlign='center';g.font=`700 ${f1}px Nunito`;const w1=g.measureText(ch.label).width;g.font=`600 ${f2}px Nunito`;const w2=g.measureText(line2).width;
+      const bw=Math.max(w1,w2)+18,bh=f1+f2+14;
+      g.fillStyle='rgba(10,28,45,.78)';g.strokeStyle='rgba(243,226,166,.5)';g.lineWidth=1;g.beginPath();g.roundRect?g.roundRect(top[0]-bw/2,top[1]-bh-6,bw,bh,8):g.rect(top[0]-bw/2,top[1]-bh-6,bw,bh);g.fill();g.stroke();
+      g.fillStyle='#f3e2a6';g.font=`700 ${f1}px Nunito`;g.fillText(ch.label,top[0],top[1]-bh-6+f1+3);
+      g.fillStyle='#cfe8ff';g.font=`600 ${f2}px Nunito`;g.fillText(line2,top[0],top[1]-10);}
+  }
+  for(const s of V.sparks){const pp=P(s.cx+s.p[0],s.p[1],s.p[2]);items.push({x:pp[0],y:pp[1],z:pp[2]-0.01,spark:s.t,r:(0.05+s.t*0.35)*f/pp[2]});}
+  items.sort((a,b)=>b.z-a.z);
+  for(const it of items){
+    if(it.spark!=null){g.strokeStyle=`rgba(120,230,150,${1-it.spark/0.7})`;g.lineWidth=2.5;g.beginPath();g.arc(it.x,it.y,it.r,0,6.283);g.stroke();
+      g.fillStyle=`rgba(200,255,210,${0.8-it.spark})`;g.beginPath();g.arc(it.x,it.y,Math.max(1,it.r*0.25),0,6.283);g.fill();continue;}
+    if(it.r<0.5)continue;
+    const gr=g.createRadialGradient(it.x-it.r*.35,it.y-it.r*.35,it.r*.1,it.x,it.y,it.r);
+    gr.addColorStop(0,'#ffffff');gr.addColorStop(0.25,it.c);gr.addColorStop(1,shade(it.c));
+    g.fillStyle=gr;g.beginPath();g.arc(it.x,it.y,it.r,0,6.283);g.fill();
+  }
+  // AR corner brackets
+  g.strokeStyle='rgba(95,179,232,.7)';g.lineWidth=2;const m=14,L2=26;
+  [[m,m,1,1],[w-m,m,-1,1],[m,h-m-50,1,-1],[w-m,h-m-50,-1,-1]].forEach(([x,y,a,b])=>{g.beginPath();g.moveTo(x,y+L2*b);g.lineTo(x,y);g.lineTo(x+L2*a,y);g.stroke();});
+}
+const shadeCache={};
+function shade(hex){if(shadeCache[hex])return shadeCache[hex];const n=parseInt(hex.slice(1),16);const r=(n>>16)*.35|0,g2=((n>>8)&255)*.35|0,b=(n&255)*.35|0;return shadeCache[hex]=`rgb(${r},${g2},${b})`;}
+
+/* =========================================================
+   RIGHT PANEL
+   ========================================================= */
+function syncPill(){
+  if(syncState==='live')return '<span class="syncpill ok">● Live sync on</span>';
+  if(syncState==='off')return '<span class="syncpill bad">Live sync unavailable</span>';
+  return '<span class="syncpill">Connecting…</span>';
+}
+let rightBuilt=false;
+function renderRight(){
+  const rp=$('rightPanel');if(!rp||$('app').classList.contains('hidden'))return;
+  if(S.role==='t')return renderTeacherRight(rp);
+  // student
+  const answered=[...CORE,'d','x1'].filter(k=>S.mine[k]!=null).length;
+  const correct=[...CORE,'x1'].filter(k=>S.mine[k]!=null&&S.mine[k]===Q[k].ans).length+(S.mine.d!=null&&S.mine.dl&&S.mine.d===Q[DIFF[S.mine.dl]].ans?1:0);
+  const backup=S.me+'.'+[...CORE,'d','x1'].map(k=>S.mine[k]!=null?L[S.mine[k]]:'-').join('')+(S.mine.dl||'');
+  rp.innerHTML=`<div class="ph-h"><h3>📋 My progress</h3></div><div class="in">
+    <div class="mycodes">${S.me}</div>
+    <div style="text-align:center;margin-bottom:8px">${syncPill()}</div>
+    ${S.teacherSeen?`<div class="resp" style="text-align:center">Teacher connected · on <b>${PHASES[S.teacherPhase??0].name}</b></div><div style="text-align:center;margin:6px 0"><button class="btn sm ${S.follow?'green':'ghost'}" id="followBtn">${S.follow?'✓ Following teacher':'↪ Follow teacher'}</button></div>`:(syncState==='live'?'<div class="resp" style="text-align:center">Waiting for the teacher to open the lesson…</div>':'')}
+    <div class="stat"><div><b>${answered}/7</b><span>answered</span></div><div><b>${correct}</b><span>correct</span></div></div>
+    ${[...CORE,'d','x1'].map(k=>{const q=k==='d'?(S.mine.dl?Q[DIFF[S.mine.dl]]:null):Q[k];const v=S.mine[k];const ok=q&&v!=null&&v===q.ans;
+      return `<div class="prog-row"><span>${k==='d'?'Level challenge':k==='x1'?'Exit ticket':Q[k].n+' · '+PHASES[Q[k].phase].name}</span><span class="${v==null?'c-na':ok?'c-ok':'c-no'}">${v==null?'—':ok?'✓':'✗'}</span></div>`;}).join('')}
+    ${S.mine.dl?`<div style="margin-top:10px;text-align:center"><span class="lvlb ${S.mine.dl}" style="font-size:13px;padding:4px 10px">${LV[S.mine.dl].name}</span></div>`:''}
+    <div class="sect-t">Backup result code</div>
+    <div class="backup">${backup}</div>
+    <div class="resp" style="margin-top:6px">${syncState==='live'?'Your answers are sent to your teacher automatically.':'If live sync is off, read or show this code to your teacher.'}</div>
+  </div>`;
+  const fb=$('followBtn');if(fb)fb.onclick=()=>{S.follow=!S.follow;if(S.follow&&S.teacherPhase!=null)gotoPhase(S.teacherPhase,true);renderRight();};
+}
+function renderTeacherRight(rp){
+  const rows=[];let joined=0,levels={g:0,y:0,r:0};const perQ={};COLS.forEach(c=>perQ[c]={ok:0,n:0});
+  for(let i=1;i<=Math.max(S.size,maxCode());i++){
+    const code='CH'+i;const g=grade(code);const live=!!S.livePeers[code];
+    if(g){joined++;if(g.lvl)levels[g.lvl]++;}
+    const cell=k=>{if(!g||g.out[k]==null)return '<td class="c-na">·</td>';if(g.out[k]!=null){perQ[k].n++;if(g.out[k])perQ[k].ok++;}return g.out[k]?'<td class="c-ok">✓</td>':'<td class="c-no">✗</td>';};
+    rows.push(`<tr class="${g||live?'':'absent'}"><td class="code"><span class="live ${live?'on':''}"></span>${code}</td>${COLS.map(cell).join('')}<td>${g&&g.lvl?`<span class="lvlb ${g.lvl}">${LV[g.lvl].name.slice(0,3)}</span>`:'<span class="c-na">·</span>'}</td><td><b>${g?g.total:''}</b></td></tr>`);
+  }
+  const liveN=Object.keys(S.livePeers).length;
+  const labels={q1:'Q1',q2:'Q2',q3:'Q3',q4:'Q4',q5:'Q5',d:'Lvl',x1:'Exit'};
+  const skills={q1:Q.q1.skill,q2:Q.q2.skill,q3:Q.q3.skill,q4:Q.q4.skill,q5:Q.q5.skill,d:'Level challenge',x1:Q.x1.skill};
+  rp.innerHTML=`<div class="ph-h"><h3>📡 Live results <span style="margin-left:auto">${syncPill()}</span></h3>
+    <div class="stat"><div><b>${liveN}</b><span>online</span></div><div><b>${joined}</b><span>with answers</span></div><div><b>${S.lesson}</b><span>lesson code</span></div></div></div>
+    <div class="in" style="padding-top:4px">
+    <table class="rtable"><tr><th style="text-align:left">Code</th>${COLS.map(c=>`<th title="${esc(skills[c])}">${labels[c]}</th>`).join('')}<th>Level</th><th>/7</th></tr>${rows.join('')}</table>
+    <div class="sect-t">Class analysis</div>
+    <div class="stat"><div style="background:var(--green-l)"><b style="color:var(--green)">${levels.g}</b><span>Explorers</span></div><div style="background:var(--yellow-l)"><b style="color:#9a7408">${levels.y}</b><span>Innovators</span></div><div style="background:var(--red-l)"><b style="color:var(--red)">${levels.r}</b><span>Experts</span></div></div>
+    ${COLS.map(c=>{const p=perQ[c].n?Math.round(perQ[c].ok/perQ[c].n*100):null;return `<div class="qbar ${p!=null&&p<60?'weak':''}" title="${esc(skills[c])}"><span style="width:34px;font-weight:800">${labels[c]}</span><div class="bb"><i style="width:${p||0}%"></i></div><span style="width:38px;text-align:right">${p==null?'—':p+'%'}</span></div>`;}).join('')}
+    <div class="resp">Red bars (&lt; 60%) show weak skills to re-teach.</div>
+    <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><button class="btn gold sm" data-dl style="flex:1">⬇ Download data</button><button class="btn ghost sm" data-copy>Copy CSV</button></div>
+    <div class="sect-t">Add a backup result code</div>
+    <div style="display:flex;gap:6px"><input id="bkIn" placeholder="CH3.BDDAC-B" style="flex:1;min-width:0;font:inherit;padding:7px 9px;border-radius:9px;border:2px solid var(--line)"><button class="btn sm" id="bkBtn">Add</button></div>
+    <div class="resp" style="margin-top:4px">For students whose device can’t sync live.</div>
+    <div class="sect-t">Settings</div>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="autoAdv" ${S.autoAdvance?'checked':''}> Move to the next phase when its time ends</label>
+    ${syncState==='off'?`<div class="fb no" style="font-size:12.5px">Live sync needs the students to open this page signed in to Claude, with the page shared to them by email from the Share menu. Students can always give you their backup code.</div>`:''}
+  </div>`;
+  rp.querySelectorAll('[data-dl]').forEach(b=>b.onclick=downloadCSV);
+  rp.querySelectorAll('[data-copy]').forEach(b=>b.onclick=copyCSV);
+  $('autoAdv').onchange=e=>S.autoAdvance=e.target.checked;
+  $('bkBtn').onclick=()=>{
+    const v=$('bkIn').value.trim().toUpperCase();const m=v.match(/^(CH\d{1,3})\.([ABCD-]{7})([GYR])?$/);
+    if(!m){toast('Code format: CH3.BDDAC-B (7 letters or dashes)');return;}
+    const a={};[...CORE,'d','x1'].forEach((k,i)=>{const ch=m[2][i];if(ch!=='-')a[k]=L.indexOf(ch);});
+    mergeResult(m[1],a,m[3]?m[3].toLowerCase():null,Date.now(),'manual');$('bkIn').value='';renderRight();refreshTeacherCounts();toast('Added '+m[1]);
+  };
+}
+function maxCode(){let m=0;for(const c in S.results){const n=parseInt(c.slice(2));if(n>m)m=n;}return m;}
+
+/* =========================================================
+   EXPORT
+   ========================================================= */
+function buildCSV(){
+  const head=['Lesson code','Student code','Online now'];
+  [...CORE].forEach(k=>head.push(`${Q[k].n} answer`,`${Q[k].n} correct`));
+  head.push('Core score (/5)','Level','Level question','Level answer','Level correct','Exit ticket answer','Exit ticket correct','Total (/7)','Weak skills','Source','Last update');
+  const lines=[head];const perQ={};COLS.forEach(c=>perQ[c]={ok:0,n:0});const lv={g:0,y:0,r:0};
+  for(let i=1;i<=Math.max(S.size,maxCode());i++){
+    const code='CH'+i;const r=S.results[code];const g=grade(code);
+    const row=[S.lesson,code,S.livePeers[code]?'yes':'no'];
+    const weak=[];
+    CORE.forEach(k=>{const v=r&&r.a[k];row.push(v!=null?L[v]:'',g&&g.out[k]!=null?(g.out[k]?'1':'0'):'');if(g&&g.out[k]===false)weak.push(Q[k].skill);if(g&&g.out[k]!=null){perQ[k].n++;if(g.out[k])perQ[k].ok++;}});
+    row.push(g?String(g.core):'',g&&g.lvl?LV[g.lvl].name:'');
+    const dq=g&&g.dl?Q[DIFF[g.dl]]:null;
+    row.push(dq?dq.skill:'',r&&r.a.d!=null?L[r.a.d]:'',g&&g.out.d!=null?(g.out.d?'1':'0'):'');
+    if(g&&g.out.d===false)weak.push(dq.skill);if(g&&g.out.d!=null){perQ.d.n++;if(g.out.d)perQ.d.ok++;}
+    row.push(r&&r.a.x1!=null?L[r.a.x1]:'',g&&g.out.x1!=null?(g.out.x1?'1':'0'):'');
+    if(g&&g.out.x1===false)weak.push(Q.x1.skill);if(g&&g.out.x1!=null){perQ.x1.n++;if(g.out.x1)perQ.x1.ok++;}
+    if(g&&g.lvl)lv[g.lvl]++;
+    row.push(g?String(g.total):'',weak.join(' | '),r?r.src:'',r?new Date(r.t).toLocaleString():'');
+    lines.push(row);
+  }
+  lines.push([]);lines.push(['CLASS SUMMARY']);lines.push(['Item','Skill','Correct answer','Responses','% correct','Status']);
+  COLS.forEach(c=>{const q=c==='d'?null:Q[c];const p=perQ[c].n?Math.round(perQ[c].ok/perQ[c].n*100):'';lines.push([c==='d'?'Level challenge':q.n,c==='d'?'Differentiated question (by level)':q.skill,q?L[q.ans]:'G:B / Y:D / R:A',perQ[c].n,p,p===''?'':p<60?'WEAK - reteach':p<80?'Developing':'Secure']);});
+  lines.push([]);lines.push(['Levels','Explorers',lv.g,'Innovators',lv.y,'Experts',lv.r]);
+  return '﻿'+lines.map(r=>r.map(v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(',')).join('\r\n');
+}
+async function downloadCSV(){
+  const csv=buildCSV();const name=`RateLaws_${S.lesson}_results.csv`;
+  await capsReady;
+  if(cap.dl){try{await cap.dl.save({filename:name,data:csv});toast('✅ Data file saved');return;}catch(e){if(e&&e.code==='declined'){toast('Download cancelled');return;}}}
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();a.remove();toast('⬇ Downloading…');}catch(e){copyCSV();}
+}
+async function copyCSV(){
+  try{await navigator.clipboard.writeText(buildCSV().replace('﻿',''));toast('📋 CSV copied — paste into Excel or Google Sheets');}catch(e){toast('Copy is blocked here — use Download');}
+}
+
+/* boot */
+route();
+</script>
+</body>
+</html>
