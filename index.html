@@ -558,7 +558,7 @@ function grade(code){
 }
 
 /* db persistence (teacher) */
-let saveT=null,saving=false,saveAgain=false;
+let saveT=null,saving=false,saveAgain=false,sessionRead=false; // saving replaces results, so only after a successful read
 function saveSession(){
   if(S.role!=='t')return;
   ls.set('rl_t_'+S.lesson,{size:S.size,results:S.results});
@@ -566,6 +566,7 @@ function saveSession(){
   clearTimeout(saveT); saveT=setTimeout(doSave,1500);
 }
 async function doSave(){
+  if(!sessionRead)return;
   if(saving){saveAgain=true;return;}
   saving=true;
   try{await cap.sb.from('sessions').upsert({lesson:S.lesson,size:S.size,results:S.results});}catch(e){}
@@ -577,7 +578,9 @@ async function loadSession(){
   await capsReady;
   if(!cap.sb)return;
   try{
-    const {data:d}=await cap.sb.from('sessions').select('size,results').eq('lesson',S.lesson).maybeSingle();
+    const {data:d,error}=await cap.sb.from('sessions').select('size,results').eq('lesson',S.lesson).maybeSingle();
+    if(error)throw error;
+    sessionRead=true;
     if(d){
       if(Number.isInteger(d.size)&&d.size>=1&&d.size<=60)S.size=d.size;
       // codes and src are checked here because they end up in the CSV
